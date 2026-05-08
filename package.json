@@ -1,0 +1,53 @@
+{
+  "name": "@dgplsoares/singulai-ds-mcp",
+  "version": "0.1.0",
+  "description": "MCP server exposing the Singulai Design System (Angular 20) to AI agents — Claude Desktop, Claude Code, Cursor, Continue.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "singulai-ds-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "design-system",
+    "angular",
+    "neumorphism",
+    "singulai",
+    "claude",
+    "ai-agents"
+  ],
+  "author": "Diogo Soares <https://www.linkedin.com/in/dgsoares/>",
+  "license": "MIT",
+  "homepage": "https://design.singulai.ai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dgplsoares/singulai-design-system-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dgplsoares/singulai-design-system-mcp/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
