@@ -1,0 +1,358 @@
+{
+  "version": "0.1.0",
+  "generated_at": "2026-05-08",
+  "design_system": {
+    "name": "Singulai Design System",
+    "version": "DS-2.1",
+    "homepage": "https://design.singulai.ai",
+    "repo": "https://github.com/dgplsoares/singulai-design-system",
+    "stack": [
+      "Angular 20",
+      "Standalone Components",
+      "Signals",
+      "SCSS Tokens",
+      "Neumorphic"
+    ],
+    "principles": [
+      "Standalone components — no NgModule required",
+      "Signal-based inputs (input(), input.required())",
+      "Mobile-first with 100dvh + overscroll-behavior:none",
+      "Themeable via CSS variables (no Tailwind inside DS)",
+      "Brand assets configurable via @Input (split-ready)"
+    ]
+  },
+  "types": {
+    "ButtonVariant": ["primary-cta", "solid", "outline", "action", "icon", "submit", "sidebar", "modal-cancel"],
+    "ButtonSize": ["sm", "md", "lg"],
+    "ButtonVariantColor": ["primary", "secondary", "tertiary", "success", "danger", "warning", "dark", "goal", "apex"],
+    "ButtonType": ["button", "submit", "reset"],
+    "CardVariant": ["default", "dashboard", "with-tabs", "simple", "inner-card"],
+    "CardState": ["default", "loading", "empty", "error"],
+    "FormFieldVariant": ["text", "textarea", "select", "toggle", "search"],
+    "FormFieldSize": ["sm", "md", "lg"],
+    "FormFieldType": ["text", "email", "password", "number", "tel", "url"],
+    "IconNeumorphicSize": ["sm", "md", "lg"],
+    "IconNeumorphicVariant": ["default", "apex", "success", "warning", "danger", "info", "purple"],
+    "PageHeaderVariant": ["default", "module-dashboard", "screen-list", "screen-create", "screen-detail"],
+    "PageLayoutVariant": ["dashboard", "list", "wizard", "tabs-internas", "detail-fullwidth"],
+    "AiAssistantLayoutState": ["closed", "open"],
+    "NavFooterPanel": ["navegue", "ai", "alertas", "conta"],
+    "AiTab": ["current", "new", "chats"],
+    "SidebarState": ["expanded", "collapsed"],
+    "StatsbarCardVariant": ["success", "purple", "warning", "info", "danger", "neutral"],
+    "StatsbarCardDeltaDirection": ["up", "down"]
+  },
+  "components": [
+    {
+      "name": "ButtonComponent",
+      "selector": "ds-button",
+      "description": "Botão unificado do DS — 8 variants estruturais (solid, outline, icon, sidebar, etc.) × 9 cores semânticas. Suporta ícones left/right (heroicons ou imagens), estados loading/disabled e flag active para nav-items.",
+      "tags": ["button", "cta", "action", "form", "navigation", "icon", "loading"],
+      "props": [
+        { "name": "variant", "type": "ButtonVariant", "required": true, "description": "Tipo estrutural do botão." },
+        { "name": "size", "type": "ButtonSize", "default": "'md'", "description": "Tamanho." },
+        { "name": "variantColor", "type": "ButtonVariantColor", "default": "'apex'", "description": "Cor semântica." },
+        { "name": "type", "type": "ButtonType", "default": "'button'", "description": "Atributo HTML type." },
+        { "name": "iconLeft", "type": "string | null", "default": "null", "description": "Nome de ícone heroX (left)." },
+        { "name": "iconImageSrc", "type": "string | null", "default": "null", "description": "Path de SVG/PNG (left). Tem precedência sobre iconLeft." },
+        { "name": "iconImageSize", "type": "string", "default": "'20px'", "description": "Tamanho do ícone via path." },
+        { "name": "iconRight", "type": "string | null", "default": "null", "description": "Nome de ícone heroX (right)." },
+        { "name": "disabled", "type": "boolean", "default": "false", "description": "Estado disabled." },
+        { "name": "loading", "type": "boolean", "default": "false", "description": "Mostra spinner e desabilita interação." },
+        { "name": "ariaLabel", "type": "string | null", "default": "null", "description": "Aria-label customizado." },
+        { "name": "active", "type": "boolean", "default": "false", "description": "Estado active (sidebar nav, toggle, etc.)." }
+      ],
+      "outputs": [
+        { "name": "clicked", "type": "EventEmitter<MouseEvent>" }
+      ],
+      "examples": [
+        "<ds-button variant=\"solid\" variantColor=\"primary\" (clicked)=\"onSave()\">Salvar</ds-button>",
+        "<ds-button variant=\"icon\" iconLeft=\"heroPencil\" ariaLabel=\"Editar\" (clicked)=\"onEdit()\" />",
+        "<ds-button variant=\"primary-cta\" [loading]=\"saving()\" type=\"submit\">Criar conta</ds-button>"
+      ]
+    },
+    {
+      "name": "CardComponent",
+      "selector": "ds-card",
+      "description": "Container genérico do DS — 5 variants de chrome (default, dashboard, with-tabs, simple, inner-card) com slots para título, ícone, tabs de navegação interna e dropdown de ações.",
+      "tags": ["card", "container", "panel", "tabs", "dropdown"],
+      "props": [
+        { "name": "title", "type": "string | null", "default": "null", "description": "Título no header." },
+        { "name": "icon", "type": "string | null", "default": "null", "description": "Ícone heroX no header." },
+        { "name": "variant", "type": "CardVariant", "default": "'default'", "description": "Variant de chrome." },
+        { "name": "state", "type": "CardState", "default": "'default'", "description": "Estado: default, loading, empty, error." },
+        { "name": "navTabs", "type": "CardNavTab[] | null", "default": "null", "description": "Tabs de navegação interna (variant with-tabs)." },
+        { "name": "dropdownItems", "type": "CardDropdownItem[] | null", "default": "null", "description": "Itens de dropdown de ações no header." },
+        { "name": "ariaLabel", "type": "string | null", "default": "null", "description": "Aria-label customizado." }
+      ],
+      "examples": [
+        "<ds-card title=\"Receita mensal\" icon=\"heroChartBar\">\n  <p>R$ 12.480,00</p>\n</ds-card>",
+        "<ds-card variant=\"dashboard\" [state]=\"loading() ? 'loading' : 'default'\">...</ds-card>"
+      ]
+    },
+    {
+      "name": "CardPanelComponent",
+      "selector": "ds-card-panel",
+      "description": "Painel containerizado simples com título obrigatório e estado de loading. Útil para sub-seções dentro de páginas.",
+      "tags": ["panel", "container", "loading", "section"],
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Título do painel." },
+        { "name": "loading", "type": "boolean", "default": "false", "description": "Estado de loading." }
+      ],
+      "examples": [
+        "<ds-card-panel title=\"Pagamentos pendentes\">\n  <ds-data-table [rows]=\"rows()\" />\n</ds-card-panel>"
+      ]
+    },
+    {
+      "name": "FormFieldComponent",
+      "selector": "ds-form-field",
+      "description": "Campo de formulário unificado — 5 variants (text, textarea, select, toggle, search) com ControlValueAccessor para integração com Reactive Forms e Template-driven forms. Suporta hint, errorMessage, required, loading e estados disabled.",
+      "tags": ["form", "input", "textarea", "select", "toggle", "search", "validation", "reactive-forms", "ngmodel"],
+      "props": [
+        { "name": "variant", "type": "FormFieldVariant", "required": true, "description": "Tipo do campo." },
+        { "name": "size", "type": "FormFieldSize", "default": "'md'", "description": "Tamanho." },
+        { "name": "type", "type": "FormFieldType", "default": "'text'", "description": "Atributo HTML type (apenas variant=text)." },
+        { "name": "label", "type": "string | null", "default": "null", "description": "Label exibido acima do campo." },
+        { "name": "placeholder", "type": "string", "default": "''", "description": "Placeholder." },
+        { "name": "hint", "type": "string | null", "default": "null", "description": "Hint abaixo do campo." },
+        { "name": "errorMessage", "type": "string | null", "default": "null", "description": "Mensagem de erro (override do estado interno)." },
+        { "name": "required", "type": "boolean", "default": "false", "description": "Marca como obrigatório (asterisco + aria-required)." },
+        { "name": "disabled", "type": "boolean", "default": "false", "description": "Estado disabled." },
+        { "name": "loading", "type": "boolean", "default": "false", "description": "Spinner no canto direito." },
+        { "name": "rows", "type": "number", "default": "4", "description": "Linhas (apenas variant=textarea)." },
+        { "name": "maxLength", "type": "number | null", "default": "null", "description": "Máximo de caracteres." },
+        { "name": "options", "type": "FormFieldOption[] | null", "default": "null", "description": "Opções (apenas variant=select)." },
+        { "name": "externalDescribedBy", "type": "string | null", "default": "null", "description": "Prefix de aria-describedby externo." },
+        { "name": "chevronDownIconSrc", "type": "string", "default": "'branding/icons/form/chevron-down.svg'", "description": "Override do ícone chevron (split-ready)." },
+        { "name": "searchIconSrc", "type": "string", "default": "'branding/icons/form/search.svg'", "description": "Override do ícone search (split-ready)." }
+      ],
+      "outputs": [
+        { "name": "valueChange", "type": "EventEmitter<unknown>" },
+        { "name": "blurred", "type": "EventEmitter<FocusEvent>" }
+      ],
+      "examples": [
+        "<ds-form-field variant=\"text\" label=\"Nome\" formControlName=\"name\" [required]=\"true\" />",
+        "<ds-form-field variant=\"select\" label=\"Categoria\" [(ngModel)]=\"categoria\" [options]=\"categoriasOptions\" />",
+        "<ds-form-field variant=\"toggle\" label=\"Ativo\" formControlName=\"active\" />",
+        "<ds-form-field variant=\"search\" placeholder=\"Pesquisar...\" [(ngModel)]=\"q\" />"
+      ]
+    },
+    {
+      "name": "IconNeumorphicComponent",
+      "selector": "ds-icon-neumorphic",
+      "description": "Ícone em moldura neumorphic — 3 sizes (sm 28px, md 40px, lg 50px) × 7 variants de cor. Aceita ícone heroX (icon prop) ou path de SVG/PNG (iconImageSrc). Bounding-box quadrada com object-fit:contain garante render correto em mobile.",
+      "tags": ["icon", "neumorphic", "decoration", "kpi"],
+      "props": [
+        { "name": "icon", "type": "string | null", "default": "null", "description": "Nome de ícone heroX (use APENAS se não houver iconImageSrc)." },
+        { "name": "iconImageSrc", "type": "string | null", "default": "null", "description": "Path de SVG/PNG. Tem precedência sobre icon." },
+        { "name": "size", "type": "IconNeumorphicSize", "default": "'md'", "description": "Tamanho do container." },
+        { "name": "variant", "type": "IconNeumorphicVariant", "default": "'default'", "description": "Variant de cor do ícone interno." },
+        { "name": "ariaLabel", "type": "string | null", "default": "null", "description": "Aria-label. Sem isso, o container é decorativo." }
+      ],
+      "examples": [
+        "<ds-icon-neumorphic icon=\"heroChartBar\" size=\"md\" variant=\"apex\" />",
+        "<ds-icon-neumorphic iconImageSrc=\"branding/icons/statsbar/01-revenue.svg\" size=\"lg\" />"
+      ]
+    },
+    {
+      "name": "PageLayoutComponent",
+      "selector": "ds-page-layout",
+      "description": "Skeleton root das telas autenticadas. Container de viewport (100dvh) que organiza sidebar (desktop) + main scrollable + nav-footer (mobile) + AI Assistant overlay. Mobile-first com overscroll-behavior:none.",
+      "tags": ["layout", "shell", "skeleton", "viewport", "responsive", "mobile-first"],
+      "props": [
+        { "name": "variant", "type": "PageLayoutVariant", "default": "'dashboard'", "description": "Variant do layout (afeta padding/scroll do main)." },
+        { "name": "aiAssistantState", "type": "AiAssistantLayoutState", "default": "'closed'", "description": "Estado do AI Assistant (closed | open)." },
+        { "name": "sidebarWidth", "type": "string", "default": "'280px'", "description": "Largura da sidebar expandida." },
+        { "name": "aiAssistantWidth", "type": "string", "default": "'400px'", "description": "Largura do AI Assistant aberto." },
+        { "name": "mainAriaLabel", "type": "string", "default": "'Conteudo principal'", "description": "Aria-label do <main>." },
+        { "name": "dashboardActive", "type": "boolean", "default": "false", "description": "True quando rota = /dashboard (afeta nav-footer)." },
+        { "name": "aiMaximized", "type": "boolean", "default": "false", "description": "AI Assistant em modo maximizado." }
+      ],
+      "examples": [
+        "<ds-page-layout variant=\"dashboard\">\n  <ds-sidebar-left-nav page-layout-sidebar [menuItems]=\"items\" />\n  <ds-page-header page-layout-header title=\"Dashboard\" />\n  <main page-layout-main>...</main>\n</ds-page-layout>"
+      ]
+    },
+    {
+      "name": "PageHeaderComponent",
+      "selector": "ds-page-header",
+      "description": "Header sticky presente em todas as telas autenticadas. Estrutura em 3 zonas: navegação (back/forward + título), breadcrumbs (centro), actions (direita). Variant module-dashboard tem botões Reorganizar/Personalizar.",
+      "tags": ["header", "navigation", "breadcrumbs", "title", "sticky"],
+      "props": [
+        { "name": "variant", "type": "PageHeaderVariant", "default": "'module-dashboard'", "description": "Variant do header." },
+        { "name": "title", "type": "string", "required": true, "description": "Título da tela." },
+        { "name": "icon", "type": "string | null", "default": "null", "description": "Ícone heroX antes do título." },
+        { "name": "breadcrumbs", "type": "PageHeaderBreadcrumb[]", "default": "[]", "description": "Caminho de navegação." },
+        { "name": "canGoBack", "type": "boolean", "default": "false", "description": "Habilita botão voltar." },
+        { "name": "canGoForward", "type": "boolean", "default": "false", "description": "Habilita botão avançar." },
+        { "name": "reorganizeActive", "type": "boolean", "default": "false", "description": "Estado active do botão Reorganizar." },
+        { "name": "customizeActive", "type": "boolean", "default": "false", "description": "Estado active do botão Personalizar." },
+        { "name": "mobileLogoSrc", "type": "string", "default": "'branding/logo-singulai-icon.png'", "description": "Logo mobile (split-ready)." },
+        { "name": "mobileLogoAlt", "type": "string", "default": "'Singulai'", "description": "Alt text do logo mobile." }
+      ],
+      "examples": [
+        "<ds-page-header title=\"Cursos\" icon=\"heroBookOpen\" [breadcrumbs]=\"[{label: 'Ensino'}, {label: 'Cursos'}]\" />"
+      ]
+    },
+    {
+      "name": "SidebarLeftNavComponent",
+      "selector": "ds-sidebar-left-nav",
+      "description": "Sidebar principal collapsible — 5 estados visuais (collapsed 44px / expanded ~280px / item-active / item-default / item-hover). Persiste expanded/collapsed em localStorage. Submenus expansíveis com mutex (apenas 1 aberto por vez).",
+      "tags": ["sidebar", "navigation", "menu", "collapsible", "submenu"],
+      "props": [
+        { "name": "menuItems", "type": "SidebarMenuItem[]", "default": "[]", "description": "Items do menu raiz com submenus." },
+        { "name": "user", "type": "SidebarUser | null", "default": "null", "description": "Usuário logado (footer avatar)." },
+        { "name": "initialState", "type": "SidebarState", "default": "'collapsed'", "description": "Estado inicial. Override do localStorage." },
+        { "name": "logoFullSrc", "type": "string", "default": "'branding/logo-singulai-full.png'", "description": "Logo completo (expanded — split-ready)." },
+        { "name": "logoIconSrc", "type": "string", "default": "'branding/logo-singulai-icon.png'", "description": "Logo ícone (collapsed — split-ready)." },
+        { "name": "logoAlt", "type": "string", "default": "'Singulai'", "description": "Alt do logo (split-ready)." },
+        { "name": "menuToggleExpandedIconSrc", "type": "string", "default": "'branding/icons/icon-menu-expanded.svg'", "description": "Ícone toggle expandido (split-ready)." },
+        { "name": "menuToggleCollapsedIconSrc", "type": "string", "default": "'branding/icons/icon-menu-default.svg'", "description": "Ícone toggle colapsado (split-ready)." },
+        { "name": "userIconSrc", "type": "string", "default": "'branding/icons/menu/user.svg'", "description": "Ícone usuário no footer (split-ready)." }
+      ],
+      "outputs": [
+        { "name": "stateChange", "type": "EventEmitter<SidebarState>" },
+        { "name": "searchClick", "type": "EventEmitter<void>" },
+        { "name": "accountClick", "type": "EventEmitter<void>" },
+        { "name": "submenuItemClick", "type": "EventEmitter<string>" }
+      ],
+      "examples": [
+        "<ds-sidebar-left-nav [menuItems]=\"items\" [user]=\"currentUser()\" (accountClick)=\"openAccount()\" />"
+      ]
+    },
+    {
+      "name": "NavFooterComponent",
+      "selector": "ds-nav-footer",
+      "description": "Bottom navigation mobile com 5 botões (Dashboard / Navegue / Agente IA / Alertas / Conta). Painéis crescem para cima com mutex (apenas 1 aberto por vez). Visível apenas <992px via @media SCSS.",
+      "tags": ["navigation", "mobile", "bottom-nav", "footer", "tab-bar", "panels"],
+      "props": [
+        { "name": "activePanel", "type": "NavFooterPanel | null", "default": "null", "description": "Painel atualmente aberto (mutex)." },
+        { "name": "dashboardActive", "type": "boolean", "default": "false", "description": "Dashboard active (rota = /dashboard)." },
+        { "name": "navegueActive", "type": "boolean", "default": "false", "description": "Navegue active (rota raiz que não /dashboard)." },
+        { "name": "homeIconSrc", "type": "string", "default": "'branding/icons/nav-footer/01-home.svg'", "description": "Ícone Home (split-ready)." },
+        { "name": "navegueIconSrc", "type": "string", "default": "'branding/icons/nav-footer/02-navegue.svg'", "description": "Ícone Navegue (split-ready)." },
+        { "name": "aiIconSrc", "type": "string", "default": "'branding/icons/nav-footer/03-agente-ia.svg'", "description": "Ícone AI (split-ready)." },
+        { "name": "alertasIconSrc", "type": "string", "default": "'branding/icons/nav-footer/04-alertas.svg'", "description": "Ícone Alertas (split-ready)." },
+        { "name": "contaIconSrc", "type": "string", "default": "'branding/icons/nav-footer/05-conta.svg'", "description": "Ícone Conta (split-ready)." }
+      ],
+      "outputs": [
+        { "name": "panelToggle", "type": "EventEmitter<NavFooterPanel>" },
+        { "name": "dashboardClick", "type": "EventEmitter<void>" },
+        { "name": "closePanels", "type": "EventEmitter<void>" }
+      ],
+      "examples": [
+        "<ds-nav-footer page-layout-nav-footer [activePanel]=\"layout.navFooterPanel()\" (panelToggle)=\"layout.togglePanel($event)\" />"
+      ]
+    },
+    {
+      "name": "AiAssistantPanelComponent",
+      "selector": "ds-ai-assistant-panel",
+      "description": "Painel lateral do Agente IA — header com tabs (current/new/chats) + créditos pill + actions (settings, maximize/minimize, close) + timeline de mensagens + action prompts + composer. Modo embedded para projeção em mobile bottom-sheet.",
+      "tags": ["ai", "assistant", "chat", "panel", "agent", "llm"],
+      "props": [
+        { "name": "showTitle", "type": "boolean", "default": "false", "description": "Exibe label 'Agente IA' (true=desktop, false=mobile)." },
+        { "name": "credits", "type": "number", "default": "0", "description": "Saldo de créditos IA na pill." },
+        { "name": "messages", "type": "AiMessage[]", "default": "[]", "description": "Mensagens da timeline." },
+        { "name": "actionPrompts", "type": "string[]", "default": "[]", "description": "Sugestões de prompts clicáveis." },
+        { "name": "activeTab", "type": "AiTab", "default": "'current'", "description": "Tab ativo." },
+        { "name": "hasCurrentChat", "type": "boolean", "default": "true", "description": "Mostra tab 'Chat atual...' closable." },
+        { "name": "currentChatLabel", "type": "string", "default": "'Chat atual...'", "description": "Label do tab atual." },
+        { "name": "maximized", "type": "boolean", "default": "false", "description": "Visual do botão maximize (icon contract vs expand)." },
+        { "name": "embedded", "type": "boolean", "default": "false", "description": "Modo embedded (remove card chrome — para nesting em mobile bottom-sheet)." },
+        { "name": "settingsIconSrc", "type": "string", "default": "'branding/icons/ai-assistant/settings.svg'", "description": "Ícone settings (split-ready)." },
+        { "name": "maximizeIconSrc", "type": "string", "default": "'branding/icons/ai-assistant/maximize.svg'", "description": "Ícone maximize (split-ready)." },
+        { "name": "minimizeIconSrc", "type": "string", "default": "'branding/icons/ai-assistant/minimize.svg'", "description": "Ícone minimize (split-ready)." },
+        { "name": "closeIconSrc", "type": "string", "default": "'branding/icons/ai-assistant/close.svg'", "description": "Ícone close (split-ready)." }
+      ],
+      "examples": [
+        "<ds-ai-assistant-panel page-layout-ai [showTitle]=\"true\" [credits]=\"creditsLeft()\" [messages]=\"chatMessages()\" [actionPrompts]=\"suggestions()\" />"
+      ]
+    },
+    {
+      "name": "SegmentedTabsComponent",
+      "selector": "ds-segmented-tabs",
+      "description": "Tabs segmentados pill-style com items closable opcionais e radius dinâmico baseado em $first/$last. Generic <K> para tipagem das keys (ex: 'day' | 'week' | 'month').",
+      "tags": ["tabs", "segmented", "pills", "filter", "period"],
+      "props": [
+        { "name": "items", "type": "SegmentedTabItem<K>[]", "required": true, "description": "Items dos tabs (key + label + closable opcional)." },
+        { "name": "activeKey", "type": "K | null", "default": "null", "description": "Key do tab ativo." }
+      ],
+      "outputs": [
+        { "name": "tabSelect", "type": "EventEmitter<K>" },
+        { "name": "tabClose", "type": "EventEmitter<K>" }
+      ],
+      "examples": [
+        "<ds-segmented-tabs [items]=\"[{key:'day',label:'Dia'},{key:'week',label:'Semana'}]\" [activeKey]=\"'week'\" (tabSelect)=\"setPeriod($event)\" />"
+      ]
+    },
+    {
+      "name": "StatsbarCardComponent",
+      "selector": "ds-statsbar-card",
+      "description": "Card de KPI para statsbar — title + value + delta (com seta up/down) + ícone neumorphic embutido. 6 variants de cor (success/purple/warning/info/danger/neutral). Polaridade invertida disponível (delta down como positivo).",
+      "tags": ["kpi", "statsbar", "metric", "card", "dashboard"],
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Título do KPI." },
+        { "name": "value", "type": "string | number", "required": true, "description": "Valor principal." },
+        { "name": "delta", "type": "string | null", "default": "null", "description": "Variação (ex: '+12%' ou 'R$ 480')." },
+        { "name": "deltaDirection", "type": "StatsbarCardDeltaDirection", "default": "'up'", "description": "Seta do delta." },
+        { "name": "inversePolarity", "type": "boolean", "default": "false", "description": "Inverte semântica de cor (delta down como positivo)." },
+        { "name": "variant", "type": "StatsbarCardVariant", "default": "'neutral'", "description": "Variant de cor do ícone." },
+        { "name": "iconImageSrc", "type": "string | null", "default": "null", "description": "Path do ícone (ex: 'branding/icons/statsbar/01-revenue.svg')." },
+        { "name": "iconWidth", "type": "number", "default": "22", "description": "Largura intrínseca do SVG (HTML attr para mobile)." },
+        { "name": "iconHeight", "type": "number", "default": "22", "description": "Altura intrínseca do SVG (HTML attr para mobile)." }
+      ],
+      "examples": [
+        "<ds-statsbar-card title=\"Receita\" [value]=\"12480\" delta=\"+12%\" deltaDirection=\"up\" variant=\"success\" iconImageSrc=\"branding/icons/statsbar/01-revenue.svg\" />"
+      ]
+    },
+    {
+      "name": "AiAssistantButtonComponent",
+      "selector": "ds-ai-assistant-button",
+      "description": "Botão de toggle do AI Assistant para o combo do header (32px height). Estado active (panel aberto) com triple-ring neumorphic + bg #EFF3F8.",
+      "tags": ["ai", "button", "toggle", "header", "combo"],
+      "props": [
+        { "name": "ariaLabel", "type": "string", "default": "'Abrir Assistente IA'", "description": "Aria-label." },
+        { "name": "active", "type": "boolean", "default": "false", "description": "AI Assistant panel aberto." },
+        { "name": "sparklesIconSrc", "type": "string", "default": "'branding/icons/sparkles.svg'", "description": "Override do ícone sparkles (split-ready)." }
+      ],
+      "outputs": [
+        { "name": "clicked", "type": "EventEmitter<MouseEvent>" }
+      ],
+      "examples": [
+        "<ds-ai-assistant-button [active]=\"aiState() === 'open'\" (clicked)=\"toggleAi()\" />"
+      ]
+    },
+    {
+      "name": "DarkModeButtonComponent",
+      "selector": "ds-dark-mode-button",
+      "description": "Toggle de tema (light/dark) para o combo do header. Composite SVG com lua + cone de luz rotacionado + 2 estrelas em cruz, todos com filter neumorphic unificado.",
+      "tags": ["theme", "dark-mode", "button", "toggle", "header", "combo"],
+      "props": [
+        { "name": "ariaLabel", "type": "string", "default": "'Alternar tema claro/escuro'", "description": "Aria-label." },
+        { "name": "moonIconSrc", "type": "string", "default": "'branding/icons/moon-vector217.svg'", "description": "Lua principal (split-ready)." },
+        { "name": "moonGlowIconSrc", "type": "string", "default": "'branding/icons/moon-vector.svg'", "description": "Cone de luz (split-ready)." }
+      ],
+      "outputs": [
+        { "name": "clicked", "type": "EventEmitter<MouseEvent>" }
+      ],
+      "examples": [
+        "<ds-dark-mode-button (clicked)=\"themeService.toggle()\" />"
+      ]
+    },
+    {
+      "name": "NotificationsButtonComponent",
+      "selector": "ds-notifications-button",
+      "description": "Botão de sino de notificações para o combo do header (32px). Renderiza apenas o SVG bell com filter neumorphic.",
+      "tags": ["notifications", "bell", "button", "header", "combo"],
+      "props": [
+        { "name": "ariaLabel", "type": "string", "default": "'Notificacoes'", "description": "Aria-label." },
+        { "name": "bellIconSrc", "type": "string", "default": "'branding/icons/bell.svg'", "description": "Override do ícone bell (split-ready)." }
+      ],
+      "outputs": [
+        { "name": "clicked", "type": "EventEmitter<MouseEvent>" }
+      ],
+      "examples": [
+        "<ds-notifications-button (clicked)=\"openNotifications()\" />"
+      ]
+    }
+  ]
+}

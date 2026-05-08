@@ -6,9 +6,10 @@
 [![License](https://img.shields.io/badge/license-MIT-22C55E)](./LICENSE)
 [![Status](https://img.shields.io/badge/status-pre--alpha-F59E0B)](#status)
 
-🚧 **Pre-alpha** — em desenvolvimento ativo. Documentação de instalação e
-publicação no npm chegam em v0.1.0 (próximas fases). Por enquanto, o repo
-serve como vitrine pública do desenvolvimento.
+🚧 **Alpha** — funcionalmente operacional, ainda não publicado no npm.
+Documentação de instalação para Claude Desktop / Claude Code / Cursor +
+publicação chegam na v0.1.0 (próxima fase). Por enquanto, o repo serve
+como vitrine pública do desenvolvimento — você pode clonar e rodar local.
 
 ## O que é?
 
@@ -25,9 +26,15 @@ precisar ler docs:
 
 | Fase | Tools |
 |---|---|
-| ✅ MCP-1 (atual) | `hello_singulai` (placeholder) |
-| 🟡 MCP-2/3 | `list_components`, `get_component`, `search_components` |
-| 🔜 v0.2+ | `get_tokens`, `get_examples`, `get_theme_overrides` |
+| ✅ MCP-1/2/3 (atual) | `list_components`, `get_component`, `search_components` |
+| 🟡 MCP-4 | npm publish + docs de instalação |
+| 🔜 v0.2+ | `get_tokens`, `get_examples`, `get_theme_overrides`, catálogo auto-gerado via ts-morph |
+
+## Tools v0.1
+
+- **`list_components()`** — retorna os 15 componentes do DS com nome, selector e descrição curta
+- **`get_component(name)`** — info completa de um componente: descrição, tags, todos os `@Input` tipados (com defaults), `@Output`, e exemplos de uso. Aceita selector (`ds-button`) ou nome de classe (`ButtonComponent`)
+- **`search_components(query)`** — busca por palavras-chave em selector + nome + descrição + tags, com scoring
 
 ## Stack
 
