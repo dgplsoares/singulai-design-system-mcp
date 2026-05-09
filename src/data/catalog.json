@@ -43,7 +43,8 @@
     "SidebarState": ["expanded", "collapsed"],
     "StatsbarCardVariant": ["success", "purple", "warning", "info", "danger", "neutral"],
     "StatsbarCardDeltaDirection": ["up", "down"],
-    "ToastVariant": ["success", "info", "warning", "error"]
+    "ToastVariant": ["success", "info", "warning", "error"],
+    "ModalConfirmVariant": ["info", "success", "warning", "danger"]
   },
   "components": [
     {
@@ -392,6 +393,79 @@
         "const toast = inject(ToastService);",
         "toast.success('Curso criado!');",
         "toast.error('Falha ao salvar.');"
+      ]
+    },
+    {
+      "name": "ModalConfirmComponent",
+      "selector": "ds-modal-confirm",
+      "description": "Modal de confirmação centralizado. Caso de uso primário: confirmar delete de registros (regra de produto: TODA operação de delete usa este modal). Wrapper thin de <app-modal-dialog> aplicando override visual canônico (Figma 805:4558): header com título colorido na variant + body 2 níveis (bold question + record name medium gray) + botão confirmar com chevron-right + paleta danger #935050 (burgundy). 4 variants semânticas: info/success/warning/danger (default). Internamente delega backdrop/ESC/focus/scroll-lock ao app-modal-dialog. Caller controla [isOpen] via signal.",
+      "tags": ["modal", "confirm", "dialog", "delete", "alert", "confirmation"],
+      "props": [
+        { "name": "isOpen", "type": "boolean", "required": true, "description": "Estado de abertura. Caller controla via signal e seta false ao receber (cancelled) ou (confirmed)." },
+        { "name": "variant", "type": "ModalConfirmVariant", "default": "'danger'", "description": "Variant semântica + visual. Default danger porque delete é o caso predominante." },
+        { "name": "title", "type": "string", "required": true, "description": "Título do header (cor herda da variant via SCSS)." },
+        { "name": "message", "type": "string", "required": true, "description": "Pergunta principal em bold no body (ex: 'Confirma que deseja excluir o registro abaixo?')." },
+        { "name": "recordName", "type": "string | null", "default": "null", "description": "Nome do registro a confirmar ação (sub-message medium gray no body). Quando null, mostra só [message]." },
+        { "name": "confirmLabel", "type": "string | null", "default": "null", "description": "Label do botão confirmar. Default depende da variant: danger='Excluir', warning='Continuar', info='OK', success='Confirmar'." },
+        { "name": "cancelLabel", "type": "string", "default": "'Cancelar'", "description": "Label do botão cancelar." }
+      ],
+      "outputs": [
+        { "name": "confirmed", "type": "EventEmitter<void>", "description": "Emitido ao clicar no botão confirmar. Caller deve setar [isOpen]=false." },
+        { "name": "cancelled", "type": "EventEmitter<void>", "description": "Emitido ao cancelar (botão Cancelar OU backdrop OU ESC OU X). Caller deve setar [isOpen]=false." }
+      ],
+      "examples": [
+        "<ds-modal-confirm",
+        "  [isOpen]=\"showDeleteConfirm()\"",
+        "  variant=\"danger\"",
+        "  title=\"Excluir Curso\"",
+        "  message=\"Confirma que deseja excluir o registro abaixo?\"",
+        "  [recordName]=\"course().name\"",
+        "  (confirmed)=\"onDeleteConfirmed()\"",
+        "  (cancelled)=\"showDeleteConfirm.set(false)\"",
+        "/>"
+      ]
+    },
+    {
+      "name": "DatatableComponent",
+      "selector": "ds-datatable",
+      "description": "Tabela de dados com search, sort, paginação client/server-side, filters, bulk actions, custom cells (badge/avatar/composite/progress/switch/actions), templates customizados. Wrapper thin (config-only) de <app-data-table> existente em /shared/components/. Visual override aplicado via SCSS para alinhar com Figma 862:10798 (paleta: headers #516D87, cells #5C6F8E, border #DFE3EA, dividers #D5DCE6). Re-exporta DataTableConfig<T>, ColumnDef<T>, RowAction<T>, etc. de shared. Aceita um único [config] object — não duplica as ~30 props internas.",
+      "tags": ["datatable", "data-table", "table", "list", "grid", "pagination", "sort", "search", "filter"],
+      "props": [
+        { "name": "data", "type": "T[]", "default": "[]", "description": "Array de dados a renderizar. Generic <T> para tipagem das linhas." },
+        { "name": "config", "type": "DataTableConfig<T>", "required": true, "description": "Configuração completa: columns, rowActions, bulkActions, searchable, sortable, paginated, server-side mode, filterDropdown, addButton, etc." },
+        { "name": "loading", "type": "boolean", "default": "false", "description": "Estado de loading (mostra skeleton)." },
+        { "name": "error", "type": "string | null", "default": "null", "description": "Mensagem de erro (renderiza estado de erro)." },
+        { "name": "externalFilter", "type": "((item: T) => boolean) | null", "default": "null", "description": "Filtro externo customizado (predicate por item)." }
+      ],
+      "outputs": [
+        { "name": "stateChange", "type": "EventEmitter<DataTableStateChange>", "description": "Mudança consolidada (search/sort/pagination/filters)." },
+        { "name": "rowClick", "type": "EventEmitter<T>", "description": "Click em uma linha." },
+        { "name": "selectionChange", "type": "EventEmitter<T[]>", "description": "Mudança de seleção (modo selectable)." },
+        { "name": "reload", "type": "EventEmitter<void>", "description": "Solicitação de reload (botão de reload da toolbar)." },
+        { "name": "pageChange", "type": "EventEmitter<PageChangeEvent>", "description": "Server-side: mudança de página." },
+        { "name": "sortChange", "type": "EventEmitter<SortChangeEvent>", "description": "Server-side: mudança de ordenação." },
+        { "name": "searchChange", "type": "EventEmitter<SearchChangeEvent>", "description": "Server-side: mudança de busca." },
+        { "name": "filterChange", "type": "EventEmitter<FilterChangeEvent>", "description": "Server-side: mudança de filtro dropdown." },
+        { "name": "switchChange", "type": "EventEmitter<SwitchChangeEvent<T>>", "description": "Mudança em coluna switch (toggle ativo/inativo)." }
+      ],
+      "examples": [
+        "const tableConfig: DataTableConfig<Course> = {",
+        "  columns: [",
+        "    { key: 'name', label: 'Curso', type: 'text', sortable: true },",
+        "    { key: 'isActive', label: 'Status', type: 'switch', switchConfig: { activeLabel: 'Ativo' } },",
+        "    { key: 'level', label: 'Nivel', type: 'badge' },",
+        "  ],",
+        "  searchable: true,",
+        "  paginated: true,",
+        "  initialPageSize: 20,",
+        "};",
+        "",
+        "<ds-datatable",
+        "  [data]=\"courses()\"",
+        "  [config]=\"tableConfig\"",
+        "  [loading]=\"isLoading()\"",
+        "  (rowClick)=\"onRowClick($event)\"",
+        "/>"
       ]
     },
     {
