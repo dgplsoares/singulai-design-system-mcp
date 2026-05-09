@@ -44,7 +44,8 @@
     "StatsbarCardVariant": ["success", "purple", "warning", "info", "danger", "neutral"],
     "StatsbarCardDeltaDirection": ["up", "down"],
     "ToastVariant": ["success", "info", "warning", "error"],
-    "ModalConfirmVariant": ["info", "success", "warning", "danger"]
+    "ModalConfirmVariant": ["info", "success", "warning", "danger"],
+    "ChartType": ["line", "bar", "pie", "area", "doughnut"]
   },
   "components": [
     {
@@ -465,6 +466,32 @@
         "  [config]=\"tableConfig\"",
         "  [loading]=\"isLoading()\"",
         "  (rowClick)=\"onRowClick($event)\"",
+        "/>"
+      ]
+    },
+    {
+      "name": "ChartComponent",
+      "selector": "ds-chart",
+      "description": "Wrapper config-only sobre <app-chart-widget> (Chart.js v4.5.1) — 5 tipos: line, bar, area, pie, doughnut. Chrome neumorphic canônico (border #DFE3EA + radius 10 + bg semi-transparente + inner shadow white) inspirado no Figma 1042:28615 (card 'Receitas por Periodo'). Aplica defaults DS: paleta tokens (apex, success, warning, danger, purple, info), tooltip neumorphic (bg branco + texto escuro + border DS), eixos Manrope SemiBold 12px com cor #5C6F8E. Caller pode sobrescrever qualquer default via ChartConfig (props additive).",
+      "tags": ["chart", "graph", "line", "area", "pie", "doughnut", "bar", "chartjs", "data-viz"],
+      "props": [
+        { "name": "config", "type": "ChartConfig", "required": true, "description": "Configuração do chart (chartType, height, colors, showLegend, showGrid, tooltipBackgroundColor, axisLabelColor, etc.)." },
+        { "name": "data", "type": "ChartData | null", "default": "null", "description": "Dados do chart (labels + datasets array). null mostra placeholder 'Sem dados'." }
+      ],
+      "outputs": [],
+      "examples": [
+        "// Area chart single series — Receitas por Periodo",
+        "const config: ChartConfig = { type: 'chart', chartType: 'area', height: 240 };",
+        "const data: ChartData = {",
+        "  labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],",
+        "  datasets: [{ label: 'Receita', data: [65, 78, 90, 80, 95, 110] }],",
+        "};",
+        "<ds-chart [config]=\"config\" [data]=\"data\" />",
+        "",
+        "// Pie chart — Top Itens (6 slices, paleta DS automatica)",
+        "<ds-chart",
+        "  [config]=\"{ type: 'chart', chartType: 'pie', height: 280, showLegend: true }\"",
+        "  [data]=\"topItensData\"",
         "/>"
       ]
     },
