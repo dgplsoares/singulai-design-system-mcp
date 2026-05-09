@@ -37,6 +37,21 @@ const ComponentSchema = z.object({
   examples: z.array(z.string()).default([]),
 });
 
+const ServiceMethodSchema = z.object({
+  name: z.string(),
+  signature: z.string(),
+  description: z.string(),
+});
+
+const ServiceSchema = z.object({
+  name: z.string(),
+  providedIn: z.string(),
+  description: z.string(),
+  tags: z.array(z.string()),
+  methods: z.array(ServiceMethodSchema),
+  examples: z.array(z.string()).default([]),
+});
+
 const CatalogSchema = z.object({
   version: z.string(),
   generated_at: z.string(),
@@ -50,11 +65,13 @@ const CatalogSchema = z.object({
   }),
   types: z.record(z.string(), z.array(z.string())),
   components: z.array(ComponentSchema),
+  services: z.array(ServiceSchema).optional().default([]),
 });
 
 export type Catalog = z.infer<typeof CatalogSchema>;
 export type CatalogComponent = z.infer<typeof ComponentSchema>;
 export type CatalogProp = z.infer<typeof PropSchema>;
+export type CatalogService = z.infer<typeof ServiceSchema>;
 
 // ---------------------------------------------------------------------------
 // Loader

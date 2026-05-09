@@ -1,6 +1,6 @@
 {
-  "version": "0.1.0",
-  "generated_at": "2026-05-08",
+  "version": "0.1.1",
+  "generated_at": "2026-05-09",
   "design_system": {
     "name": "Singulai Design System",
     "version": "DS-2.1",
@@ -34,13 +34,16 @@
     "IconNeumorphicSize": ["sm", "md", "lg"],
     "IconNeumorphicVariant": ["default", "apex", "success", "warning", "danger", "info", "purple"],
     "PageHeaderVariant": ["default", "module-dashboard", "screen-list", "screen-create", "screen-detail"],
+    "ProgressBarSize": ["sm", "md", "lg"],
+    "ProgressBarVariant": ["apex", "success", "warning", "danger", "info", "purple", "pink", "neutral"],
     "PageLayoutVariant": ["dashboard", "list", "wizard", "tabs-internas", "detail-fullwidth"],
     "AiAssistantLayoutState": ["closed", "open"],
     "NavFooterPanel": ["navegue", "ai", "alertas", "conta"],
     "AiTab": ["current", "new", "chats"],
     "SidebarState": ["expanded", "collapsed"],
     "StatsbarCardVariant": ["success", "purple", "warning", "info", "danger", "neutral"],
-    "StatsbarCardDeltaDirection": ["up", "down"]
+    "StatsbarCardDeltaDirection": ["up", "down"],
+    "ToastVariant": ["success", "info", "warning", "error"]
   },
   "components": [
     {
@@ -268,6 +271,24 @@
       ]
     },
     {
+      "name": "ProgressBarComponent",
+      "selector": "ds-progress-bar",
+      "description": "Barra de progresso visual genérica — chrome neumorphic aninhado (container externo + track + fill). 8 variants de cor (apex/success/warning/danger/info/purple/pink/neutral) × 3 sizes (sm 6px / md 10px padrão / lg 14px). Renderiza apenas a barra; label/valor/delta ficam fora do componente — caller compõe. Visual baseado em Figma 1042:28527 (Uso do Plano) e 1042:28755 (Funil de Vendas).",
+      "tags": ["progress", "bar", "indicator", "loading", "kpi", "feedback"],
+      "props": [
+        { "name": "value", "type": "number", "required": true, "description": "Valor atual (numerador)." },
+        { "name": "max", "type": "number", "default": "100", "description": "Máximo possível (denominador). Default 100 = uso percentual direto." },
+        { "name": "variant", "type": "ProgressBarVariant", "default": "'apex'", "description": "Variant de cor do fill." },
+        { "name": "size", "type": "ProgressBarSize", "default": "'md'", "description": "Tamanho da barra. md (10px height) bate com o Figma do dashboard." },
+        { "name": "ariaLabel", "type": "string | null", "default": "null", "description": "Aria-label customizado. Default: aria-valuenow + aria-valuetext (\"X de Y\") já garantem screen reader." }
+      ],
+      "examples": [
+        "<ds-progress-bar [value]=\"78\" variant=\"success\" size=\"md\" />",
+        "<ds-progress-bar [value]=\"42\" [max]=\"60\" variant=\"purple\" />",
+        "<ds-progress-bar [value]=\"920\" [max]=\"1000\" variant=\"danger\" ariaLabel=\"Créditos IA usados\" />"
+      ]
+    },
+    {
       "name": "SegmentedTabsComponent",
       "selector": "ds-segmented-tabs",
       "description": "Tabs segmentados pill-style com items closable opcionais e radius dinâmico baseado em $first/$last. Generic <K> para tipagem das keys (ex: 'day' | 'week' | 'month').",
@@ -352,6 +373,66 @@
       ],
       "examples": [
         "<ds-notifications-button (clicked)=\"openNotifications()\" />"
+      ]
+    },
+    {
+      "name": "ToastComponent",
+      "selector": "ds-toast",
+      "description": "Toast individual de notificação (item visual). 4 variants (success/info/warning/error) — cada uma com ícone heroicons + cor de accent na border-left + cor do ícone. Card neumorphic-light com border-left 4px colorido + ícone esquerda + mensagem centro + botão X dismiss à direita. NÃO usar diretamente — sempre via ToastService que renderiza via <ds-toast-host>. Suporte ARIA: role='alert' (error) ou 'status' (outras), aria-live assertive/polite.",
+      "tags": ["toast", "notification", "feedback", "alert", "snackbar"],
+      "props": [
+        { "name": "variant", "type": "ToastVariant", "required": true, "description": "Variant visual: success (verde), info (azul), warning (laranja), error (vermelho)." },
+        { "name": "message", "type": "string", "required": true, "description": "Mensagem textual (sem HTML)." }
+      ],
+      "outputs": [
+        { "name": "dismissed", "type": "EventEmitter<void>", "description": "Emitido quando o usuário clica no botão X. Host consome e chama ToastService.dismiss(id)." }
+      ],
+      "examples": [
+        "// Não use diretamente — use ToastService:",
+        "const toast = inject(ToastService);",
+        "toast.success('Curso criado!');",
+        "toast.error('Falha ao salvar.');"
+      ]
+    },
+    {
+      "name": "ToastHostComponent",
+      "selector": "ds-toast-host",
+      "description": "Container singleton que renderiza o stack do ToastService. Posiciona-se fixed top-right (top:70px right:70px desktop / top:16px right:16px mobile). Stack vertical (gap 12px), max 5 toasts visíveis (FIFO drop). Animação de entrada slide-in da direita + fade (300ms ease-out). Respeita prefers-reduced-motion. Instanciar UMA vez no shell da app: <ds-toast-host /> em app.component.html.",
+      "tags": ["toast", "host", "container", "queue", "singleton"],
+      "props": [],
+      "outputs": [],
+      "examples": [
+        "<!-- Em app.component.html, uma vez só: -->",
+        "<ds-toast-host />"
+      ]
+    }
+  ],
+  "services": [
+    {
+      "name": "ToastService",
+      "providedIn": "root",
+      "description": "Service global de notificações toastr-style. Singleton. API pública simples: 4 métodos por variant — toast.success(msg), toast.info(msg), toast.warning(msg), toast.error(msg). Sem options object por chamada (decisão A1). Duração fixa por variant: 4s para success/info/warning, 6s para error. Max 5 toasts simultâneos (FIFO drop quando excedido). Dismiss manual via botão X cancela timer interno. Renderizado pelo <ds-toast-host /> que vive no shell da app.",
+      "tags": ["toast", "notification", "service", "feedback"],
+      "methods": [
+        { "name": "success", "signature": "(message: string): void", "description": "Notificação verde. Auto-destroy 4s." },
+        { "name": "info", "signature": "(message: string): void", "description": "Notificação azul. Auto-destroy 4s." },
+        { "name": "warning", "signature": "(message: string): void", "description": "Notificação laranja. Auto-destroy 4s." },
+        { "name": "error", "signature": "(message: string): void", "description": "Notificação vermelha. Auto-destroy 6s (mais tempo para ler)." },
+        { "name": "dismiss", "signature": "(id: number): void", "description": "Dismiss programático pelo id. Usado internamente pelo <ds-toast> ao receber click no X." }
+      ],
+      "examples": [
+        "import { ToastService } from '@/design-system';",
+        "",
+        "export class MyComponent {",
+        "  private readonly toast = inject(ToastService);",
+        "",
+        "  onSave() {",
+        "    this.api.save().subscribe({",
+        "      next: () => this.toast.success('Salvo!'),",
+        "      error: () => this.toast.error('Falha ao salvar.'),",
+        "    });",
+        "  }",
+        "}"
       ]
     }
   ]
