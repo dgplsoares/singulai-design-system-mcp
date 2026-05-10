@@ -535,6 +535,41 @@
         "  }",
         "}"
       ]
+    },
+    {
+      "name": "NavigationHistoryService",
+      "providedIn": "root",
+      "description": "Service singleton que rastreia o histórico de navegação do Angular Router. Mantém duas pilhas (pastUrls + futureUrls) sincronizadas com o browser via NavigationStart trigger detection (imperative vs popstate). <ds-page-header> consome canGoBack()/canGoForward() automaticamente para habilitar/desabilitar os botões voltar/avançar. Stack limitado a 50 entradas (FIFO). SSR-safe: sem Router fica no-op silencioso. Caller chama reset() após CRUD create para zerar o histórico.",
+      "tags": ["navigation", "history", "router", "service", "back-button"],
+      "signals": [
+        { "name": "canGoBack", "type": "Signal<boolean>", "description": "True quando há URL anterior na pilha (botão back habilita)." },
+        { "name": "canGoForward", "type": "Signal<boolean>", "description": "True quando há URL futura disponível após back() (botão forward habilita)." },
+        { "name": "pastUrls", "type": "Signal<string[]>", "description": "Snapshot read-only da pilha de URLs anteriores." },
+        { "name": "futureUrls", "type": "Signal<string[]>", "description": "Snapshot read-only da pilha de URLs futuras." },
+        { "name": "currentUrl", "type": "Signal<string | null>", "description": "URL atual rastreada (null antes da primeira NavigationEnd)." }
+      ],
+      "methods": [
+        { "name": "back", "signature": "(): void", "description": "Navega para a URL anterior usando o Router. NOOP se !canGoBack." },
+        { "name": "forward", "signature": "(): void", "description": "Navega para a URL futura. NOOP se !canGoForward." },
+        { "name": "reset", "signature": "(): void", "description": "Limpa ambas as pilhas. Chamar após CRUD create — desabilita o botão back até navegar novamente." }
+      ],
+      "examples": [
+        "import { NavigationHistoryService } from '@/design-system';",
+        "",
+        "export class CourseCreatePage {",
+        "  private readonly navHistory = inject(NavigationHistoryService);",
+        "  private readonly router = inject(Router);",
+        "",
+        "  async onSave() {",
+        "    await this.api.create(this.form.value);",
+        "    this.navHistory.reset(); // botão back desabilita",
+        "    void this.router.navigate(['/courses']);",
+        "  }",
+        "}",
+        "",
+        "<!-- O <ds-page-header> consome o service automaticamente: -->",
+        "<ds-page-header title=\"Cursos\" />"
+      ]
     }
   ]
 }
