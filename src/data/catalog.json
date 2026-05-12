@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.4.0",
   "generated_at": "2026-05-12",
   "design_system": {
     "name": "Singulai Design System",
@@ -246,6 +246,34 @@
       "lg",
       "xl",
       "full"
+    ],
+    "StatColor": [
+      "primary",
+      "success",
+      "warning",
+      "danger",
+      "info",
+      "muted",
+      "purple",
+      "indigo",
+      "pink"
+    ],
+    "StatTrend": [
+      "up",
+      "down",
+      "neutral"
+    ],
+    "StatsBarVariant": [
+      "default",
+      "compact",
+      "cards"
+    ],
+    "StatsBarColumns": [
+      2,
+      3,
+      4,
+      5,
+      6
     ]
   },
   "components": [
@@ -2020,6 +2048,47 @@
       "examples": [
         "<ds-offcanvas [(isOpen)]=\"isFormOpen\" title=\"Editar Curso\" [config]=\"{ position: 'right', size: 'lg' }\"><form>...</form></ds-offcanvas>",
         "// Com TemplateRef e footer:\n<ds-offcanvas [(isOpen)]=\"open\" title=\"...\" [contentTemplate]=\"body\" [footerTemplate]=\"footer\" [data]=\"item\" />\n<ng-template #body let-item let-close=\"close\">...</ng-template>"
+      ]
+    },
+    {
+      "name": "StatsBarComponent",
+      "selector": "ds-stats-bar",
+      "description": "Barra horizontal de metricas clicaveis (N stat-cards em grid responsivo 2-6 colunas). Thin-wrap de <app-stats-bar> (221 LOC). NAO confundir com <ds-statsbar-card> que renderiza UMA stat individual do dashboard. Cada stat tem id, label, value, color (9 opcoes legacy DEC-DSA-M), opcionalmente icon, percent, trend (up/down/neutral) com trendValue, tooltip, clickable, onClick. Suporta selecao single (default) ou multi-select via config. Skeleton loading built-in. Padrao Listagem CRUD: barra de filtros visuais no topo da pagina (clicar filtra a tabela abaixo).",
+      "tags": [
+        "stats",
+        "metrics",
+        "kpi",
+        "filter",
+        "listagem",
+        "crud",
+        "horizontal",
+        "statsbar"
+      ],
+      "props": [
+        {
+          "name": "stats",
+          "type": "StatItem[]",
+          "default": "[]",
+          "description": "Lista de stats. Cada StatItem: {id, label, value (number|string), color?, icon?, percent?, total?, tooltip?, isActive?, clickable?, onClick?, trend?, trendValue?}."
+        },
+        {
+          "name": "config",
+          "type": "StatsBarConfig",
+          "default": "{}",
+          "description": "{columns?: 2-6 (default 4), loading?, showSkeleton?, skeletonCount?, variant?: default|compact|cards, containerClass?, showIcons?, showTrends?, multiSelect?}."
+        }
+      ],
+      "outputs": [
+        {
+          "name": "statClick",
+          "type": "EventEmitter<StatSelectEvent>",
+          "description": "Emitido ao clicar em uma stat. Inclui item clicado + lista de selecionados (multi)."
+        }
+      ],
+      "examples": [
+        "<ds-stats-bar [stats]=\"courseStats()\" [config]=\"{ columns: 4, showTrends: true }\" (statClick)=\"onStatClick($event)\" />",
+        "// Stat com trend:\n{ id: 'active', label: 'Ativos', value: 89, color: 'success', percent: 72, trend: 'up', trendValue: '+12%' }",
+        "// Pipeline 6 colunas:\n<ds-stats-bar [stats]=\"pipelineStats\" [config]=\"{ columns: 6 }\" />"
       ]
     }
   ],
