@@ -1,5 +1,5 @@
 {
-  "version": "0.5.0",
+  "version": "0.6.0",
   "generated_at": "2026-05-12",
   "design_system": {
     "name": "Singulai Design System",
@@ -254,6 +254,12 @@
       4,
       5,
       6
+    ],
+    "FilterDropdownPosition": [
+      "bottom-start",
+      "bottom-end",
+      "top-start",
+      "top-end"
     ]
   },
   "components": [
@@ -2068,6 +2074,81 @@
       "examples": [
         "<ds-stats-bar [columns]=\"4\">\n  <ds-statsbar-card title=\"Lives Realizadas\" value=\"97\" delta=\"5%\" variant=\"info\" />\n  <ds-statsbar-card title=\"Lives Agendadas\" value=\"3\" delta=\"5%\" variant=\"warning\" />\n  <ds-statsbar-card title=\"Audiencia Media\" value=\"127\" delta=\"5%\" variant=\"success\" />\n  <ds-statsbar-card title=\"Gravacoes\" value=\"42\" delta=\"5%\" variant=\"purple\" />\n</ds-stats-bar>",
         "// Listagem sem delta (Figma 787-5195 Cursos):\n<ds-stats-bar [columns]=\"4\">\n  <ds-statsbar-card variant=\"info\" title=\"Todos\" value=\"48\" />\n  <ds-statsbar-card variant=\"success\" title=\"Publicados\" value=\"25\" />\n</ds-stats-bar>"
+      ]
+    },
+    {
+      "name": "FilterDropdownComponent",
+      "selector": "ds-filter-dropdown",
+      "description": "Filtro multi-select via overlay com checkboxes round neumorphic. Pattern do Figma DEC-FIG-A-4 (952-15654/16189/16231/16238). Trigger pill neumorphic (bg #EDF1F6 + drop shadow + inset top white / bottom dark) com icon filter + label dinamico + chevron. Overlay com border 1px #ADC2DD + checkboxes 16px round (selecionado: gradient azul #5C8DE2->#27467C + outer shadow neumorphic; nao-selecionado: bg #E3EDF7 + inset shadow). Estado controlado pelo caller (selectedValues array). Click fora ou ESC fecha. Usa CDK Overlay. Para single-select: caller pode emular passando array com 1 item ou usar <ds-dropdown-menu> action items.",
+      "tags": [
+        "filter",
+        "dropdown",
+        "multi-select",
+        "checkbox",
+        "overlay",
+        "listagem",
+        "status",
+        "neumorphic"
+      ],
+      "props": [
+        {
+          "name": "options",
+          "type": "FilterDropdownItem[]",
+          "required": true,
+          "description": "Array de opcoes {value, label, count?, disabled?}."
+        },
+        {
+          "name": "selectedValues",
+          "type": "string[]",
+          "default": "[]",
+          "description": "Values atualmente selecionados (controlado pelo caller)."
+        },
+        {
+          "name": "triggerLabel",
+          "type": "string",
+          "default": "'Filtro'",
+          "description": "Label do trigger button. Pattern: nome do filtro ativo ou 'N selecionados'."
+        },
+        {
+          "name": "triggerIcon",
+          "type": "string",
+          "default": "'heroFunnel'",
+          "description": "Heroicon do trigger. Default funnel (filter)."
+        },
+        {
+          "name": "position",
+          "type": "FilterDropdownPosition",
+          "default": "'bottom-start'",
+          "description": "Posicao do overlay: bottom-start | bottom-end | top-start | top-end."
+        },
+        {
+          "name": "ariaLabel",
+          "type": "string",
+          "default": "'Filtrar'",
+          "description": "Aria-label do trigger e do listbox."
+        },
+        {
+          "name": "minWidth",
+          "type": "string",
+          "default": "'200px'",
+          "description": "Largura minima do overlay (CSS)."
+        }
+      ],
+      "outputs": [
+        {
+          "name": "filtersChange",
+          "type": "EventEmitter<string[]>",
+          "description": "Emitido com o novo array de selectedValues apos cada toggle."
+        },
+        {
+          "name": "openChange",
+          "type": "EventEmitter<boolean>",
+          "description": "Emitido quando o overlay abre ou fecha."
+        }
+      ],
+      "examples": [
+        "<ds-filter-dropdown\n  [options]=\"[\n    { value: 'all', label: 'Todos', count: 7 },\n    { value: 'confirmed', label: 'Confirmados', count: 3 },\n    { value: 'pending', label: 'Pendentes', count: 2 }\n  ]\"\n  [selectedValues]=\"selected()\"\n  triggerLabel=\"Todos\"\n  (filtersChange)=\"onFilterChange($event)\"\n/>",
+        "// Caller controla o label dinamico:\nfilterLabel = computed(() => {\n  const sel = this.selected();\n  if (sel.length === 0) return 'Filtro';\n  if (sel.length === 1) return this.options.find(o => o.value === sel[0])?.label ?? 'Filtro';\n  return `${sel.length} selecionados`;\n});"
       ]
     }
   ],
