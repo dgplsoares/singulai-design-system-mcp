@@ -1,5 +1,5 @@
 {
-  "version": "0.4.0",
+  "version": "0.5.0",
   "generated_at": "2026-05-12",
   "design_system": {
     "name": "Singulai Design System",
@@ -247,28 +247,8 @@
       "xl",
       "full"
     ],
-    "StatColor": [
-      "primary",
-      "success",
-      "warning",
-      "danger",
-      "info",
-      "muted",
-      "purple",
-      "indigo",
-      "pink"
-    ],
-    "StatTrend": [
-      "up",
-      "down",
-      "neutral"
-    ],
-    "StatsBarVariant": [
-      "default",
-      "compact",
-      "cards"
-    ],
     "StatsBarColumns": [
+      1,
       2,
       3,
       4,
@@ -2053,42 +2033,41 @@
     {
       "name": "StatsBarComponent",
       "selector": "ds-stats-bar",
-      "description": "Barra horizontal de metricas clicaveis (N stat-cards em grid responsivo 2-6 colunas). Thin-wrap de <app-stats-bar> (221 LOC). NAO confundir com <ds-statsbar-card> que renderiza UMA stat individual do dashboard. Cada stat tem id, label, value, color (9 opcoes legacy DEC-DSA-M), opcionalmente icon, percent, trend (up/down/neutral) com trendValue, tooltip, clickable, onClick. Suporta selecao single (default) ou multi-select via config. Skeleton loading built-in. Padrao Listagem CRUD: barra de filtros visuais no topo da pagina (clicar filtra a tabela abaixo).",
+      "description": "Container slot-based para barra horizontal de N <ds-statsbar-card>. Pattern visual do Figma DEC-FIG-A-2 (25 URLs catalogadas para todas as telas internas — dashboards + listagens). Chrome: bg #EFF3F8 + gradient sobre white + border #DBE0E5 + radius 12px + inner white shadow. Caller compoe via <ds-statsbar-card> filhos. Desktop: flex row. Mobile (<=991px): auto-grid 2 colunas. Mobile pequeno (<=480px): 1 coluna. **NAO confundir** com <ds-statsbar-card> (UMA stat individual). **Nao envolve** o legado <app-stats-bar> de app/shared.",
       "tags": [
         "stats",
+        "statsbar",
         "metrics",
         "kpi",
-        "filter",
+        "dashboard",
         "listagem",
-        "crud",
-        "horizontal",
-        "statsbar"
+        "container",
+        "horizontal"
       ],
       "props": [
         {
-          "name": "stats",
-          "type": "StatItem[]",
-          "default": "[]",
-          "description": "Lista de stats. Cada StatItem: {id, label, value (number|string), color?, icon?, percent?, total?, tooltip?, isActive?, clickable?, onClick?, trend?, trendValue?}."
+          "name": "columns",
+          "type": "StatsBarColumns",
+          "default": "4",
+          "description": "Numero de colunas em desktop (1-6). Mobile sempre vira 2x2 grid (exceto 1/2 que mantem)."
         },
         {
-          "name": "config",
-          "type": "StatsBarConfig",
-          "default": "{}",
-          "description": "{columns?: 2-6 (default 4), loading?, showSkeleton?, skeletonCount?, variant?: default|compact|cards, containerClass?, showIcons?, showTrends?, multiSelect?}."
+          "name": "ariaLabel",
+          "type": "string",
+          "default": "'Estatisticas'",
+          "description": "Aria-label do container para screen readers."
         }
       ],
-      "outputs": [
+      "outputs": [],
+      "slots": [
         {
-          "name": "statClick",
-          "type": "EventEmitter<StatSelectEvent>",
-          "description": "Emitido ao clicar em uma stat. Inclui item clicado + lista de selecionados (multi)."
+          "name": "default",
+          "description": "N <ds-statsbar-card> filhos. Cada um e uma stat independente com title/value/delta/variant/icon."
         }
       ],
       "examples": [
-        "<ds-stats-bar [stats]=\"courseStats()\" [config]=\"{ columns: 4, showTrends: true }\" (statClick)=\"onStatClick($event)\" />",
-        "// Stat com trend:\n{ id: 'active', label: 'Ativos', value: 89, color: 'success', percent: 72, trend: 'up', trendValue: '+12%' }",
-        "// Pipeline 6 colunas:\n<ds-stats-bar [stats]=\"pipelineStats\" [config]=\"{ columns: 6 }\" />"
+        "<ds-stats-bar [columns]=\"4\">\n  <ds-statsbar-card title=\"Lives Realizadas\" value=\"97\" delta=\"5%\" variant=\"info\" />\n  <ds-statsbar-card title=\"Lives Agendadas\" value=\"3\" delta=\"5%\" variant=\"warning\" />\n  <ds-statsbar-card title=\"Audiencia Media\" value=\"127\" delta=\"5%\" variant=\"success\" />\n  <ds-statsbar-card title=\"Gravacoes\" value=\"42\" delta=\"5%\" variant=\"purple\" />\n</ds-stats-bar>",
+        "// Listagem sem delta (Figma 787-5195 Cursos):\n<ds-stats-bar [columns]=\"4\">\n  <ds-statsbar-card variant=\"info\" title=\"Todos\" value=\"48\" />\n  <ds-statsbar-card variant=\"success\" title=\"Publicados\" value=\"25\" />\n</ds-stats-bar>"
       ]
     }
   ],
