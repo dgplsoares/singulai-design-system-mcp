@@ -1,6 +1,6 @@
 {
-  "version": "0.2.0",
-  "generated_at": "2026-05-11",
+  "version": "0.3.0",
+  "generated_at": "2026-05-12",
   "design_system": {
     "name": "Singulai Design System",
     "version": "DS-2.1",
@@ -233,6 +233,19 @@
     "PipelineFunnelDeltaDirection": [
       "up",
       "down"
+    ],
+    "OffcanvasPosition": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "OffcanvasSize": [
+      "sm",
+      "md",
+      "lg",
+      "xl",
+      "full"
     ]
   },
   "components": [
@@ -1914,6 +1927,99 @@
       "examples": [
         "<ds-pipeline-funnel [items]=\"funilItems\" />",
         "// Items com polaridade invertida (tickets em aberto):\n[{key:'open',label:'Em aberto',value:42,percent:80,variant:'danger',deltaPercent:15,deltaDirection:'up',inversePolarity:true}]"
+      ]
+    },
+    {
+      "name": "OffcanvasComponent",
+      "selector": "ds-offcanvas",
+      "description": "Painel lateral deslizante (slide-out drawer). Thin-wrap de <app-offcanvas> (298 LOC). Forwarda 100% da API + re-exporta types. 4 posicoes (left/right/top/bottom) × 5 sizes (sm/md/lg/xl/full). Backdrop click + ESC + body scroll lock + animacao suave configuravel + focus trap + close button + header/footer slots via TemplateRef. Suporta tambem ng-content direto no body. Two-way binding via [(isOpen)]. Padrao default: position=right, size=md. Pattern tipico para CRUD edits inline, filtros laterais, bottom sheets (mobile), notification centers.",
+      "tags": [
+        "offcanvas",
+        "drawer",
+        "sidebar",
+        "panel",
+        "modal",
+        "slide-out",
+        "sheet",
+        "crud",
+        "form-edit"
+      ],
+      "props": [
+        {
+          "name": "isOpen",
+          "type": "boolean",
+          "default": "false",
+          "description": "Estado de abertura. Two-way binding via [(isOpen)]."
+        },
+        {
+          "name": "config",
+          "type": "OffcanvasConfig",
+          "default": "{}",
+          "description": "{position?, size?, showBackdrop?, closeOnBackdrop?, closeOnEscape?, showCloseButton?, containerClass?, panelClass?, zIndex?, blockScroll?, animationDuration?}."
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "default": "''",
+          "description": "Titulo do header. Quando vazio, header so renderiza se showCloseButton."
+        },
+        {
+          "name": "subtitle",
+          "type": "string",
+          "default": "''",
+          "description": "Subtitulo opcional abaixo do titulo."
+        },
+        {
+          "name": "data",
+          "type": "unknown",
+          "default": "null",
+          "description": "Dados passados para templateContext (uso com TemplateRef)."
+        },
+        {
+          "name": "contentTemplate",
+          "type": "TemplateRef<OffcanvasTemplateContext> | undefined",
+          "default": "undefined",
+          "description": "TemplateRef alternativo ao ng-content para o body. Recebe contexto {$implicit: data, close}."
+        },
+        {
+          "name": "footerTemplate",
+          "type": "TemplateRef<OffcanvasTemplateContext> | undefined",
+          "default": "undefined",
+          "description": "TemplateRef para o footer (action buttons). Mesmo contexto do contentTemplate."
+        }
+      ],
+      "outputs": [
+        {
+          "name": "opened",
+          "type": "EventEmitter<OffcanvasOpenEvent>",
+          "description": "Emitido apos a animacao de abertura iniciar."
+        },
+        {
+          "name": "closed",
+          "type": "EventEmitter<OffcanvasCloseEvent>",
+          "description": "Emitido ao fechar. reason: backdrop|escape|button|programmatic."
+        },
+        {
+          "name": "isOpenChange",
+          "type": "EventEmitter<boolean>",
+          "description": "Two-way binding [(isOpen)]."
+        }
+      ],
+      "publicMethods": [
+        {
+          "name": "open",
+          "signature": "(): void",
+          "description": "Abre o panel imperativamente (via ViewChild)."
+        },
+        {
+          "name": "close",
+          "signature": "(result?: unknown): void",
+          "description": "Fecha o panel imperativamente, com resultado opcional."
+        }
+      ],
+      "examples": [
+        "<ds-offcanvas [(isOpen)]=\"isFormOpen\" title=\"Editar Curso\" [config]=\"{ position: 'right', size: 'lg' }\"><form>...</form></ds-offcanvas>",
+        "// Com TemplateRef e footer:\n<ds-offcanvas [(isOpen)]=\"open\" title=\"...\" [contentTemplate]=\"body\" [footerTemplate]=\"footer\" [data]=\"item\" />\n<ng-template #body let-item let-close=\"close\">...</ng-template>"
       ]
     }
   ],
