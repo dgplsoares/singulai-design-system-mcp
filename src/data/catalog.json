@@ -1,5 +1,5 @@
 {
-  "version": "0.6.0",
+  "version": "0.7.0",
   "generated_at": "2026-05-12",
   "design_system": {
     "name": "Singulai Design System",
@@ -260,6 +260,16 @@
       "bottom-end",
       "top-start",
       "top-end"
+    ],
+    "AiCreativityLevel": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "AiVoiceTone": [
+      "formal",
+      "casual",
+      "tecnico"
     ]
   },
   "components": [
@@ -936,7 +946,7 @@
     {
       "name": "AiAssistantPanelComponent",
       "selector": "ds-ai-assistant-panel",
-      "description": "Painel lateral do Agente IA — header com tabs (current/new/chats) + créditos pill + actions (settings, maximize/minimize, close) + timeline de mensagens + action prompts + composer. Modo embedded para projeção em mobile bottom-sheet.",
+      "description": "Painel lateral do Agente IA — header com tabs (current/new/chats) + créditos pill + actions (settings, maximize/minimize, close) + timeline de mensagens + action prompts + composer. Modo embedded para projeção em mobile bottom-sheet. CHAT-1.3: adicionado slot [ai-panel-body] para embedar brain do chat + showMaximize input + settings dropdown com 4 data-switchers (G1) + send button hover micro-anim (G6).",
       "tags": [
         "ai",
         "assistant",
@@ -1023,10 +1033,41 @@
           "type": "string",
           "default": "'branding/icons/ai-assistant/close.svg'",
           "description": "Ícone close (split-ready)."
+        },
+        {
+          "name": "useBodySlot",
+          "type": "boolean",
+          "default": "false",
+          "description": "CHAT-1.3: quando true, substitui o renderer hardcoded (timeline+actionPrompts+form) pelo <ng-content select='[ai-panel-body]'> projetado. Use para embedar <app-ai-chat-timeline>."
+        },
+        {
+          "name": "showMaximize",
+          "type": "boolean",
+          "default": "true",
+          "description": "CHAT-1.3: controla render do botao maximize. Default true (desktop). Mobile passa false (Figma 1149-14553 nao tem maximize)."
+        },
+        {
+          "name": "aiPromptConfig",
+          "type": "AiPromptConfig",
+          "default": "DEFAULT_AI_PROMPT_CONFIG",
+          "description": "G1: config dos 4 data-switchers do settings dropdown (criatividade, tomVoz, searchExternal, extendedThinking)."
         }
       ],
       "examples": [
         "<ds-ai-assistant-panel page-layout-ai [showTitle]=\"true\" [credits]=\"creditsLeft()\" [messages]=\"chatMessages()\" [actionPrompts]=\"suggestions()\" />"
+      ],
+      "outputs": [
+        {
+          "name": "aiPromptConfigChange",
+          "type": "EventEmitter<AiPromptConfig>",
+          "description": "G1: emite quando user altera switcher no settings dropdown. Caller persiste e re-injeta."
+        }
+      ],
+      "slots": [
+        {
+          "name": "ai-panel-body",
+          "description": "CHAT-1.3 (DEC-CHAT1-API-1): quando useBodySlot=true, projete aqui o brain do chat (ex: <app-ai-chat-timeline ai-panel-body>). Caso contrario, ignorado."
+        }
       ]
     },
     {
