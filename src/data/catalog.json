@@ -1,5 +1,5 @@
 {
-  "version": "0.7.0",
+  "version": "0.8.0",
   "generated_at": "2026-05-12",
   "design_system": {
     "name": "Singulai Design System",
@@ -946,7 +946,7 @@
     {
       "name": "AiAssistantPanelComponent",
       "selector": "ds-ai-assistant-panel",
-      "description": "Painel lateral do Agente IA — header com tabs (current/new/chats) + créditos pill + actions (settings, maximize/minimize, close) + timeline de mensagens + action prompts + composer. Modo embedded para projeção em mobile bottom-sheet. CHAT-1.3: adicionado slot [ai-panel-body] para embedar brain do chat + showMaximize input + settings dropdown com 4 data-switchers (G1) + send button hover micro-anim (G6).",
+      "description": "Painel lateral do Agente IA — header com tabs (current/new/chats) + créditos pill + actions (settings, maximize/minimize, close) + timeline de mensagens + action prompts + composer. Modo embedded para projeção em mobile bottom-sheet. CHAT-1.3: adicionado slot [ai-panel-body] para embedar brain do chat + showMaximize input + settings dropdown com 4 data-switchers (G1) + send button hover micro-anim (G6). CHAT-1.5: input showTabs adicionado para evitar duplicacao de tabs quando body projetado ja tem.",
       "tags": [
         "ai",
         "assistant",
@@ -1051,6 +1051,12 @@
           "type": "AiPromptConfig",
           "default": "DEFAULT_AI_PROMPT_CONFIG",
           "description": "G1: config dos 4 data-switchers do settings dropdown (criatividade, tomVoz, searchExternal, extendedThinking)."
+        },
+        {
+          "name": "showTabs",
+          "type": "boolean",
+          "default": "true",
+          "description": "CHAT-1.5: controla render da row de tabs no header. Quando useBodySlot=true (caller projeta body com suas proprias tabs ex: app-ai-chat-timeline), passar `false` evita duplicacao visual. Tech debt CHAT-2: refactor timeline para usar tabs do DS panel como source of truth."
         }
       ],
       "examples": [
