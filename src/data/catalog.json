@@ -1,6 +1,6 @@
 {
-  "version": "0.8.0",
-  "generated_at": "2026-05-12",
+  "version": "0.9.0",
+  "generated_at": "2026-05-18",
   "design_system": {
     "name": "Singulai Design System",
     "version": "DS-2.1",
@@ -276,7 +276,7 @@
     {
       "name": "ButtonComponent",
       "selector": "ds-button",
-      "description": "Botão unificado do DS — 8 variants estruturais (solid, outline, icon, sidebar, etc.) × 9 cores semânticas. Suporta ícones left/right (heroicons ou imagens), estados loading/disabled e flag active para nav-items.",
+      "description": "Botão unificado do DS — 14 variants estruturais × 11 cores semânticas. Variants: primary-cta (gradient animado, card welcome), solid + outline (DS-2.1 — substituem modal-primary/modal-cancel), action (header dashboard principal — Reorganizar/Personalizar), action-icon (BTN-1 v2 — label-aware: sem children = icon-only 28×28 neumorphic row action; com children = pill icon+text inline accordion ou Plataformas header), action-add (BTN-1 v2 — mode-aware: default outline branco neumorphic; variantColor=primary = filled azul; '+ Adicionar X' em header datatable), icon (LEGACY — usar action-icon), submit, sidebar, modal-cancel/modal-primary (DEPRECATED), nav-tab, pagination, toggle-status. Suporta ícones left/right (heroicons via iconLeft/iconRight ou imagens via iconImageSrc), estados loading/disabled, flag active, e override de tamanho de ícone via iconSizeOverride (G.4.3 — DEC-G4.3-N).",
       "tags": [
         "button",
         "cta",
@@ -330,6 +330,12 @@
           "description": "Tamanho do ícone via path."
         },
         {
+          "name": "iconSizeOverride",
+          "type": "string | null",
+          "default": "null",
+          "description": "Override do tamanho do ícone heroicon (iconLeft/iconRight). Default null usa o mapeamento size→iconSize (sm=12/md=14/lg=16px). Útil quando o ícone precisa diferir do tamanho do botão (ex: action-icon size=md com ícone 17px em row actions de datatable — DEC-G4.3-N)."
+        },
+        {
           "name": "iconRight",
           "type": "string | null",
           "default": "null",
@@ -368,7 +374,10 @@
       ],
       "examples": [
         "<ds-button variant=\"solid\" variantColor=\"primary\" (clicked)=\"onSave()\">Salvar</ds-button>",
-        "<ds-button variant=\"icon\" iconLeft=\"heroPencil\" ariaLabel=\"Editar\" (clicked)=\"onEdit()\" />",
+        "<ds-button variant=\"action-icon\" size=\"sm\" variantColor=\"danger\" iconLeft=\"heroTrash\" ariaLabel=\"Excluir\" (clicked)=\"onDelete()\" />",
+        "<ds-button variant=\"action-icon\" size=\"lg\" iconLeft=\"heroSquares2x2\" variantColor=\"info\">Plataformas</ds-button>",
+        "<ds-button variant=\"action-add\" size=\"lg\" variantColor=\"primary\" iconLeft=\"heroPlus\">Adicionar Aluno</ds-button>",
+        "<ds-button variant=\"action-icon\" size=\"md\" iconSizeOverride=\"17px\" variantColor=\"info\" iconLeft=\"heroEye\" ariaLabel=\"Ver\" (clicked)=\"onView()\" />",
         "<ds-button variant=\"primary-cta\" [loading]=\"saving()\" type=\"submit\">Criar conta</ds-button>"
       ]
     },
@@ -1168,7 +1177,7 @@
     {
       "name": "StatsbarCardComponent",
       "selector": "ds-statsbar-card",
-      "description": "Card de KPI para statsbar — title + value + delta (com seta up/down) + ícone neumorphic embutido. 6 variants de cor (success/purple/warning/info/danger/neutral). Polaridade invertida disponível (delta down como positivo).",
+      "description": "Card de KPI para statsbar — title + value + delta (com seta up/down) + ícone neumorphic embutido. 7 variants de cor (success/purple/warning/info/danger/neutral/pink). Polaridade invertida disponível (deltaDirection 'down' = bom em métricas onde 'menos é melhor', ex: Tempo Médio, Tickets Abertos).",
       "tags": [
         "kpi",
         "statsbar",
@@ -1211,7 +1220,7 @@
           "name": "variant",
           "type": "StatsbarCardVariant",
           "default": "'neutral'",
-          "description": "Variant de cor do ícone."
+          "description": "Cor semântica do card. 7 variants: 'success' (verde), 'purple' (roxo, ex: Tempo Médio), 'warning' (amarelo), 'info' (azul claro), 'danger' (vermelho), 'neutral' (cinza default), 'pink' (rosa)."
         },
         {
           "name": "iconImageSrc",
@@ -1476,7 +1485,7 @@
     {
       "name": "DatatableComponent",
       "selector": "ds-datatable",
-      "description": "Tabela de dados com search, sort, paginação client/server-side, filters, bulk actions, custom cells (badge/avatar/composite/progress/switch/actions), templates customizados. Wrapper thin (config-only) de <app-data-table> existente em /shared/components/. Visual override aplicado via SCSS para alinhar com Figma 862:10798 (paleta: headers #516D87, cells #5C6F8E, border #DFE3EA, dividers #D5DCE6). Re-exporta DataTableConfig<T>, ColumnDef<T>, RowAction<T>, etc. de shared. Aceita um único [config] object — não duplica as ~30 props internas.",
+      "description": "Tabela de dados com toolbar (search + filter dropdown + secondaryAction + count badge + add button), body 2-camadas neumorphic, e pagination footer pixel-perfect (Figma 892:9019/9046/9396). Wrapper thin de <app-data-table> shared — composição config-only (DEC-PREP3-A). Refator G.4.3 (2026-05-18) trouxe pixel-perfect: toolbar usa <ds-form-field variant=search> + <ds-filter-dropdown mode=single> + <ds-button action-icon> (secondaryAction) + <ds-button action-add> (addButton). Row actions usam <ds-button variant=action-icon size=md iconSizeOverride=17px> com mapeamento RowAction.variant → colorVariant (default→info, warning→warning, danger→danger). Pagination footer: prev/next SVG icon-only, inactive numbers só texto, active pill 32×30 neumorphic. Estrutura 2-camadas via 2-border (estratégia ds-stats-bar). LIGHTMODE-FIRST estrito (zero classes dark:). Config aceita: columns, rowActions, bulkActions, filterDropdown, secondaryAction (DEC-G4.3-D — pill action-icon variantColor=info, ex: 'Categorias'/'Etiquetas'/'Tags'), addButton, itemCountBadge, serverSide + serverSideMeta, paginated, searchable. Suporta server-side ou client-side. Custom cells: badge, avatar, composite (avatar+título+desc), progress, switch, dateRelative.",
       "tags": [
         "datatable",
         "data-table",
@@ -1568,23 +1577,7 @@
         }
       ],
       "examples": [
-        "const tableConfig: DataTableConfig<Course> = {",
-        "  columns: [",
-        "    { key: 'name', label: 'Curso', type: 'text', sortable: true },",
-        "    { key: 'isActive', label: 'Status', type: 'switch', switchConfig: { activeLabel: 'Ativo' } },",
-        "    { key: 'level', label: 'Nivel', type: 'badge' },",
-        "  ],",
-        "  searchable: true,",
-        "  paginated: true,",
-        "  initialPageSize: 20,",
-        "};",
-        "",
-        "<ds-datatable",
-        "  [data]=\"courses()\"",
-        "  [config]=\"tableConfig\"",
-        "  [loading]=\"isLoading()\"",
-        "  (rowClick)=\"onRowClick($event)\"",
-        "/>"
+        "<ds-datatable [data]=\"items()\" [config]=\"tableConfig()\" [loading]=\"loading()\" (pageChange)=\"onPage($event)\" (filterChange)=\"onFilter($event)\" />"
       ]
     },
     {
@@ -2126,7 +2119,7 @@
     {
       "name": "FilterDropdownComponent",
       "selector": "ds-filter-dropdown",
-      "description": "Filtro multi-select via overlay com checkboxes round neumorphic. Pattern do Figma DEC-FIG-A-4 (952-15654/16189/16231/16238). Trigger pill neumorphic (bg #EDF1F6 + drop shadow + inset top white / bottom dark) com icon filter + label dinamico + chevron. Overlay com border 1px #ADC2DD + checkboxes 16px round (selecionado: gradient azul #5C8DE2->#27467C + outer shadow neumorphic; nao-selecionado: bg #E3EDF7 + inset shadow). Estado controlado pelo caller (selectedValues array). Click fora ou ESC fecha. Usa CDK Overlay. Para single-select: caller pode emular passando array com 1 item ou usar <ds-dropdown-menu> action items.",
+      "description": "Filtro single OU multi-select via overlay com checkboxes round neumorphic. Pattern Figma DEC-FIG-A-4 (952-15654/16189/16231/16238). Trigger pill neumorphic 48px altura (bg #EDF1F6 + drop shadow + inset top white / bottom dark — DEC-G4.3-A) com icon filter + label dinâmico + chevron. Overlay com border 1px #ADC2DD + checkboxes 16px round (selecionado: gradient azul #5C8DE2→#27467C + outer shadow neumorphic; não-selecionado: bg #E3EDF7 + inset shadow). Modo controlado via prop `mode`: 'multi' (default — toggla values, mantém overlay aberto) ou 'single' (substitui seleção + fecha overlay automaticamente — DEC-G4.3-F, padrão para filtros de listagem). Estado controlado pelo caller via selectedValues array. Click fora ou ESC fecha. Usa CDK Overlay.",
       "tags": [
         "filter",
         "dropdown",
@@ -2179,6 +2172,12 @@
           "type": "string",
           "default": "'200px'",
           "description": "Largura minima do overlay (CSS)."
+        },
+        {
+          "name": "mode",
+          "type": "FilterDropdownMode",
+          "default": "'multi'",
+          "description": "Modo de seleção: 'single' (click substitui seleção por [value] e fecha overlay) ou 'multi' (toggla value no array, overlay permanece aberto). Default 'multi' retrocompat. Single é o padrão para filtros de listagem em datatables (DEC-G4.3-F)."
         }
       ],
       "outputs": [
@@ -2194,8 +2193,8 @@
         }
       ],
       "examples": [
-        "<ds-filter-dropdown\n  [options]=\"[\n    { value: 'all', label: 'Todos', count: 7 },\n    { value: 'confirmed', label: 'Confirmados', count: 3 },\n    { value: 'pending', label: 'Pendentes', count: 2 }\n  ]\"\n  [selectedValues]=\"selected()\"\n  triggerLabel=\"Todos\"\n  (filtersChange)=\"onFilterChange($event)\"\n/>",
-        "// Caller controla o label dinamico:\nfilterLabel = computed(() => {\n  const sel = this.selected();\n  if (sel.length === 0) return 'Filtro';\n  if (sel.length === 1) return this.options.find(o => o.value === sel[0])?.label ?? 'Filtro';\n  return `${sel.length} selecionados`;\n});"
+        "<ds-filter-dropdown [options]=\"statusOptions\" [selectedValues]=\"selected()\" triggerLabel=\"Status\" mode=\"multi\" (filtersChange)=\"onFilters($event)\" />",
+        "<ds-filter-dropdown [options]=\"statusOptions\" [selectedValues]=\"[currentFilter()]\" triggerLabel=\"Todos\" mode=\"single\" (filtersChange)=\"onFilterChange($event)\" />"
       ]
     }
   ],
