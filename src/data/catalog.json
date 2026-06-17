@@ -1,9 +1,9 @@
 {
-  "version": "0.9.1",
-  "generated_at": "2026-06-19",
+  "version": "0.10.0",
+  "generated_at": "2026-06-17T10:00:00.000Z",
   "design_system": {
     "name": "Singulai Design System",
-    "version": "DS-2.1",
+    "version": "0.10.0",
     "homepage": "https://design.singulai.ai",
     "repo": "https://github.com/dgplsoares/singulai-design-system",
     "stack": [
@@ -270,6 +270,17 @@
       "formal",
       "casual",
       "tecnico"
+    ],
+    "AccordionItemKind": [
+      "ebook",
+      "aula",
+      "quiz",
+      "custom"
+    ],
+    "AccordionBadgeVariant": [
+      "success",
+      "warning",
+      "neutral"
     ]
   },
   "components": [
@@ -2195,6 +2206,327 @@
       "examples": [
         "<ds-filter-dropdown [options]=\"statusOptions\" [selectedValues]=\"selected()\" triggerLabel=\"Status\" mode=\"multi\" (filtersChange)=\"onFilters($event)\" />",
         "<ds-filter-dropdown [options]=\"statusOptions\" [selectedValues]=\"[currentFilter()]\" triggerLabel=\"Todos\" mode=\"single\" (filtersChange)=\"onFilterChange($event)\" />"
+      ]
+    },
+    {
+      "name": "FormSectionComponent",
+      "selector": "ds-form-section",
+      "description": "Card section para forms — header com icone neumorphic 34x34 + titulo + subtitle opcional + chevron toggle. Card body com 2-border canonical (Figma 683:2370): border #DBE0E5 + bg linear-gradient(rgba(229,235,242,0.70)) sobre #FFF + inset shadow branca. Suporta collapsible (default false). Animacao collapse via grid-template-rows 0fr<->1fr usando DS tokens --ds-duration-medium + --ds-ease-in-out-soft (C.4-polish). LIGHTMODE-FIRST. Wrap thin (DEC-PREP3-A) de <app-form-section> shared — propaga visual pixel-perfect para ~95 consumidores (events form, setup website, certificates, agents, courses, lives, plans, combos, mentorias).",
+      "tags": [
+        "form",
+        "section",
+        "card",
+        "collapsible",
+        "neumorphic",
+        "wizard"
+      ],
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "default": "''",
+          "description": "Titulo da secao."
+        },
+        {
+          "name": "icon",
+          "type": "string",
+          "default": "'heroClipboardDocumentList'",
+          "description": "Heroicon do header neumorphic 34x34."
+        },
+        {
+          "name": "subtitle",
+          "type": "string",
+          "default": "''",
+          "description": "Subtitulo opcional sob o titulo."
+        },
+        {
+          "name": "collapsible",
+          "type": "boolean",
+          "default": "false",
+          "description": "Habilita click no header para colapsar/expandir."
+        },
+        {
+          "name": "collapsed",
+          "type": "boolean",
+          "default": "false",
+          "description": "Estado inicial collapsed (so usado quando collapsible=true)."
+        },
+        {
+          "name": "containerClass",
+          "type": "string",
+          "default": "''",
+          "description": "Class CSS adicional no container externo."
+        }
+      ],
+      "outputs": [],
+      "examples": [
+        "<ds-form-section title=\"Informacoes do Curso\" icon=\"heroAcademicCap\"><!-- form fields --></ds-form-section>",
+        "<ds-form-section title=\"Modulos do Curso\" subtitle=\"Click para colapsar\" icon=\"heroSquares2x2\" [collapsible]=\"true\"><!-- content --></ds-form-section>",
+        "<ds-form-section title=\"Mais Configuracoes\" icon=\"heroCog6Tooth\" [collapsible]=\"true\" [collapsed]=\"true\"><!-- content --></ds-form-section>"
+      ]
+    },
+    {
+      "name": "PageFooterStickyComponent",
+      "selector": "ds-page-footer-sticky",
+      "description": "Footer sticky para wizards/forms com Cancelar + Salvar (split button + dropdown opcional). Pixel-perfect contra Figma 590:1353. Container bg #F4F7FA + divider 2-tone (#DFE5ED + border-bottom #FFF). Cancelar: border #DADADA + bg #F6F6F6 + inset neumorphic + color #7285A4 — heuristica: label=\"Voltar\" -> heroArrowLeft, else heroXMark (sem input extra). Salvar: bg #3E619E + inset shadow #305493/rgba(93,135,208,0.8). Dropdown split (+ chevron) para acoes secundarias. Ortografia PT-BR canonica (Salvar e avancar / Salvar alteracoes / Salvando...). LIGHTMODE-FIRST. Wrap thin (DEC-PREP3-A) de <app-form-actions-footer> shared — ~28 consumidores.",
+      "tags": [
+        "footer",
+        "sticky",
+        "form",
+        "actions",
+        "split-button",
+        "dropdown",
+        "wizard"
+      ],
+      "props": [
+        {
+          "name": "isSaving",
+          "type": "boolean",
+          "default": "false",
+          "description": "Mostra spinner no botao Salvar e desabilita."
+        },
+        {
+          "name": "isEditMode",
+          "type": "boolean",
+          "default": "false",
+          "description": "Altera label default: edit='Salvar alteracoes', create='Salvar e avancar'."
+        },
+        {
+          "name": "submitLabel",
+          "type": "string | undefined",
+          "default": "undefined",
+          "description": "Override do label do Salvar."
+        },
+        {
+          "name": "cancelLabel",
+          "type": "string",
+          "default": "'Cancelar'",
+          "description": "Label do Cancelar. 'Voltar' -> icon arrow-left."
+        },
+        {
+          "name": "submitDisabled",
+          "type": "boolean",
+          "default": "false",
+          "description": "Desabilita o Salvar (alem de isSaving)."
+        },
+        {
+          "name": "submitType",
+          "type": "'submit' | 'button'",
+          "default": "'submit'",
+          "description": "type HTML do Salvar."
+        },
+        {
+          "name": "showDropdown",
+          "type": "boolean",
+          "default": "false",
+          "description": "Exibe split com chevron dropdown."
+        },
+        {
+          "name": "dropdownActions",
+          "type": "FooterDropdownAction[]",
+          "default": "[]",
+          "description": "Acoes secundarias (id, label, icon)."
+        },
+        {
+          "name": "showCancelButton",
+          "type": "boolean",
+          "default": "true",
+          "description": "Mostra o botao Cancelar."
+        }
+      ],
+      "outputs": [
+        {
+          "name": "cancel",
+          "type": "EventEmitter<void>"
+        },
+        {
+          "name": "formSubmit",
+          "type": "EventEmitter<void>"
+        },
+        {
+          "name": "dropdownAction",
+          "type": "EventEmitter<string>"
+        }
+      ],
+      "examples": [
+        "<ds-page-footer-sticky [isSaving]=\"saving()\" (cancel)=\"onCancel()\" (formSubmit)=\"onSave()\" />",
+        "<ds-page-footer-sticky [isEditMode]=\"true\" cancelLabel=\"Voltar\" (cancel)=\"goBack()\" (formSubmit)=\"saveEdit()\" />",
+        "<ds-page-footer-sticky [showDropdown]=\"true\" [dropdownActions]=\"actions\" (formSubmit)=\"save()\" (dropdownAction)=\"onAction($event)\" />"
+      ]
+    },
+    {
+      "name": "ImageDropzoneComponent",
+      "selector": "ds-image-dropzone",
+      "description": "Area de drag-and-drop para upload de imagem. Pixel-perfect contra Figma 784:13836 — container neumorphic claro (border #D7E2F2 + radius 5 + bg #F8FBFF + inset shadow -3 -3 10 #FFF + 5 5 15 rgba(208,221,234,0.5)). Texto Manrope Medium 12/18 #4B5872 'Arraste e solte os arquivos ou clique aqui' + linha 2 com formatos e tamanho maximo. Estados: idle, hover, dragover, uploading (progress bar), preview (com overlay hover Trocar/Remover), error. Suporta URL manual via toggle. LIGHTMODE-FIRST. Wrap thin (DEC-PREP3-A) de <app-image-dropzone> shared — preserva ImageUploadService DI + signals de estado + validacao. Outputs alinhados (DEC-C-I): imageUploaded/imageRemoved (mesmo nome do shared). ~13 consumidores (events/event-form, setup/website-*, plans, combo, lives).",
+      "tags": [
+        "upload",
+        "image",
+        "dropzone",
+        "drag-drop",
+        "preview",
+        "form"
+      ],
+      "props": [
+        {
+          "name": "imageUrl",
+          "type": "string | null",
+          "default": "null",
+          "description": "URL da imagem atual — habilita preview mode."
+        },
+        {
+          "name": "context",
+          "type": "string",
+          "default": "'website'",
+          "description": "Contexto para o ImageUploadService (path no MinIO)."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "default": "'Imagem'",
+          "description": "Alt text e label semantico."
+        },
+        {
+          "name": "maxSizeMb",
+          "type": "number",
+          "default": "5",
+          "description": "Tamanho maximo em MB (validacao client-side)."
+        },
+        {
+          "name": "accept",
+          "type": "string",
+          "default": "'image/jpeg,image/png,image/webp,image/gif'",
+          "description": "MIME types aceitos (attr accept + validacao)."
+        },
+        {
+          "name": "aspectHint",
+          "type": "string",
+          "default": "''",
+          "description": "Hint de aspect ratio (ex: 'Recomendado 800x450px (16:9)')."
+        },
+        {
+          "name": "acceptHint",
+          "type": "string",
+          "default": "'JPG, JPEG, WebP ou PNG'",
+          "description": "Hint de formatos visivel no texto do dropzone."
+        }
+      ],
+      "outputs": [
+        {
+          "name": "imageUploaded",
+          "type": "EventEmitter<string>"
+        },
+        {
+          "name": "imageRemoved",
+          "type": "EventEmitter<void>"
+        }
+      ],
+      "examples": [
+        "<ds-image-dropzone [imageUrl]=\"thumb\" context=\"course\" aspectHint=\"800x450px (16:9)\" (imageUploaded)=\"setThumb($event)\" (imageRemoved)=\"clearThumb()\" />",
+        "<ds-image-dropzone label=\"Banner\" [maxSizeMb]=\"2\" acceptHint=\"PNG ou JPG\" (imageUploaded)=\"onUpload($event)\" />"
+      ]
+    },
+    {
+      "name": "PageNavComponent",
+      "selector": "ds-page-nav",
+      "description": "Nav horizontal de steps para wizards (Cursos/Mentorias/Eventos da Fase D). Pixel-perfect contra Figma 590:1121 (estrutura) + 784:14261 (tipografia). Outer padding 20 + tab-bar bg #EFF3F8 + border #FFF + radius 12 + 3-layer outer shadow neumorphic. Active step REPLICA visual canonico do <ds-sidebar__menu-item--active> expanded (DEC-C1-iter2): bg #EFF3F8 + border 2px #FFF + radius 9 + ring duplo box-shadow (1.375px #3577EB + 5px rgba(255,255,255,0.35)) + inset neumorphic (-5 -5 7 #FFF + 5 5 10 #B3C0CF) + [dsActiveSpin] one-shot. Inactive: Manrope Bold 13/11 #3E6FCA (Figma blue_1). API: iconSrc preferido (SVG custom em public/wizard-tabs-nav/) ou icon heroicon como fallback. Mobile (<=768px): labels colapsam (icons-only).",
+      "tags": [
+        "nav",
+        "wizard",
+        "steps",
+        "tabs",
+        "active-button",
+        "neumorphic"
+      ],
+      "props": [
+        {
+          "name": "steps",
+          "type": "PageNavStep[]",
+          "required": true,
+          "description": "Lista de steps a renderizar."
+        },
+        {
+          "name": "activeStepId",
+          "type": "string",
+          "required": true,
+          "description": "Id do step ativo (renderiza com visual canonico do sidebar active)."
+        }
+      ],
+      "outputs": [
+        {
+          "name": "stepClick",
+          "type": "EventEmitter<string>"
+        }
+      ],
+      "examples": [
+        "<ds-page-nav [steps]=\"cursosSteps\" [activeStepId]=\"currentStep()\" (stepClick)=\"goToStep($event)\" />"
+      ]
+    },
+    {
+      "name": "AccordionComponent",
+      "selector": "ds-accordion",
+      "description": "Accordion de modulos com items (Ebooks, Aulas, Quizzes) para wizards Cursos/Mentorias/Eventos da Fase D. Pixel-perfect contra Figma 590:3272. Outer card translucido (rgba(255,255,255,0.25)) + header com botoes dual-border neumorphic (Editar/Deletar Modulo) + subsection 'Aulas do modulo' + list items com badges status (success-teal #46969C / warning-bege #6E5A2E) + 3 row actions (REUSAM ds-button action-icon). API discriminated union (DEC-C-3-A): modules: AccordionModule[] com items tipados (kind: ebook|aula|quiz|custom). Toggle expanded/collapsed: header-left clicavel (icon + title + chevron) + animacao grid-template-rows 1fr<->0fr com DS tokens (mesmo pattern do form-section). Acessibilidade: aria-expanded + aria-controls. LIGHTMODE-FIRST. Componente NOVO standalone (DEC-C-A).",
+      "tags": [
+        "accordion",
+        "module",
+        "list",
+        "collapsible",
+        "wizard",
+        "course",
+        "cards"
+      ],
+      "props": [
+        {
+          "name": "modules",
+          "type": "AccordionModule[]",
+          "required": true,
+          "description": "Modulos a renderizar (com items tipados)."
+        },
+        {
+          "name": "addItemLabel",
+          "type": "string",
+          "default": "'Adicionar Aula'",
+          "description": "Label do botao + Adicionar item (header e footer)."
+        },
+        {
+          "name": "addModuleLabel",
+          "type": "string",
+          "default": "'Adicionar Modulo'",
+          "description": "Label do botao + Adicionar modulo (footer global, se exibido pelo caller)."
+        }
+      ],
+      "outputs": [
+        {
+          "name": "moduleEdit",
+          "type": "EventEmitter<string>"
+        },
+        {
+          "name": "moduleDelete",
+          "type": "EventEmitter<string>"
+        },
+        {
+          "name": "addItem",
+          "type": "EventEmitter<string>"
+        },
+        {
+          "name": "itemView",
+          "type": "EventEmitter<AccordionItemEvent>"
+        },
+        {
+          "name": "itemEdit",
+          "type": "EventEmitter<AccordionItemEvent>"
+        },
+        {
+          "name": "itemDelete",
+          "type": "EventEmitter<AccordionItemEvent>"
+        },
+        {
+          "name": "moduleToggle",
+          "type": "EventEmitter<{ moduleId: string; expanded: boolean }>"
+        }
+      ],
+      "examples": [
+        "<ds-accordion [modules]=\"cursoModules\" (moduleEdit)=\"editModule($event)\" (addItem)=\"addLesson($event)\" (itemView)=\"viewItem($event)\" />",
+        "<ds-accordion [modules]=\"mentoriaModules\" addItemLabel=\"Adicionar Sessao\" (moduleToggle)=\"trackToggle($event)\" />"
       ]
     }
   ],
