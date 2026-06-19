@@ -1,9 +1,9 @@
 {
-  "version": "0.10.0",
-  "generated_at": "2026-06-17T10:00:00.000Z",
+  "version": "0.10.1",
+  "generated_at": "2026-06-19T03:00:00.000Z",
   "design_system": {
     "name": "Singulai Design System",
-    "version": "0.10.0",
+    "version": "0.10.1",
     "homepage": "https://design.singulai.ai",
     "repo": "https://github.com/dgplsoares/singulai-design-system",
     "stack": [
@@ -2527,6 +2527,57 @@
       "examples": [
         "<ds-accordion [modules]=\"cursoModules\" (moduleEdit)=\"editModule($event)\" (addItem)=\"addLesson($event)\" (itemView)=\"viewItem($event)\" />",
         "<ds-accordion [modules]=\"mentoriaModules\" addItemLabel=\"Adicionar Sessao\" (moduleToggle)=\"trackToggle($event)\" />"
+      ]
+    },
+    {
+      "name": "TypePickerComponent",
+      "selector": "ds-type-picker",
+      "description": "Cards visuais para selecao de tipo (kind). Componente NOVO no DS para selecao via cards 104x99 — usado no offcanvas de criar/editar aula (Cursos), sessao (Mentorias) e programacao (Eventos) da Fase D. Pixel-perfect contra Figma 657:4912. Card 2-layer nested: outer border 1px #DFE3EA + radius 10; inner bg rgba(255,255,255,0.25) + border 1px #FFFFFF + padding 20. Estado SELECTED: bg #F5F7FA + border 1px #CFD7E2 + 5-layer drop shadow (effect_box_2) + inset neumorphic (-4 4 rgba(94,114,150,0.14) + 4 4 #FFF) + label #2C5CB1. API discriminated union (DEC-D-H): TypePickerOption[] com kind tipado. Suporta iconSrc (SVG custom Figma — preferido) ou icon (heroicon como fallback) + iconWidth/Height per option. Acessibilidade: role=radiogroup + role=radio + aria-checked + aria-disabled + focus-visible outline. Mobile responsive: cards menores em <=480px.",
+      "tags": [
+        "type-picker",
+        "selection",
+        "cards",
+        "radio",
+        "kind",
+        "wizard",
+        "form"
+      ],
+      "props": [
+        {
+          "name": "options",
+          "type": "TypePickerOption[]",
+          "required": true,
+          "description": "Opcoes a renderizar (1 card por opcao). Each: { kind, label, iconSrc?, icon?, iconWidth?, iconHeight?, disabled? }."
+        },
+        {
+          "name": "selectedKind",
+          "type": "string | null",
+          "default": "null",
+          "description": "Kind atualmente selecionado (null = nenhum)."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "default": "false",
+          "description": "Desabilita TODOS os cards (override do disabled per-option)."
+        },
+        {
+          "name": "ariaLabel",
+          "type": "string",
+          "default": "'Selecione um tipo'",
+          "description": "Aria-label do grupo de radio buttons."
+        }
+      ],
+      "outputs": [
+        {
+          "name": "selectedKindChange",
+          "type": "EventEmitter<string>"
+        }
+      ],
+      "examples": [
+        "<ds-type-picker [options]=\"typeOptions\" [(selectedKind)]=\"kind\" ariaLabel=\"Tipo de aula\" />",
+        "<ds-type-picker [options]=\"[{ kind: 'videoaula', label: 'Videoaula', icon: 'heroVideoCamera', iconWidth: 27, iconHeight: 15 }, { kind: 'ebook', label: 'Ebook', icon: 'heroBookOpen', iconWidth: 23, iconHeight: 23 }]\" [selectedKind]=\"selected()\" (selectedKindChange)=\"onSelect($event)\" />",
+        "<ds-type-picker [options]=\"opts\" [selectedKind]=\"null\" [disabled]=\"isSaving\" />"
       ]
     }
   ],
