@@ -1,5 +1,5 @@
 {
-  "version": "0.11.0",
+  "version": "0.12.0",
   "generated_at": "2026-06-23",
   "design_system": {
     "name": "Singulai Design System",
@@ -2744,6 +2744,49 @@
         "<ds-segmented-button label=\"Adicionar Módulo\" iconLeft=\"heroPlus\" size=\"sm\" (clicked)=\"onAddModule()\" />",
         "<ds-segmented-button label=\"Adicionar Módulo\" iconLeft=\"heroPlus\" size=\"lg\" (clicked)=\"onAddModule()\" />",
         "<ds-segmented-button label=\"Salvar\" iconLeft=\"heroCheck\" size=\"sm\" (clicked)=\"onSave()\" />"
+      ]
+    },
+    {
+      "name": "StepTabsComponent",
+      "selector": "ds-step-tabs",
+      "description": "Tabs horizontais para steps de wizards INTERNOS de offcanvas multi-step (Videoaula 4 steps, Ebook/Quiz/Texto 2 steps cada). Sub-Fase E.6.A (2026-06-23). Pixel-perfect contra Figma 706:1864 (container neumorphic border #D5DEE9 + bg #EDF1F6 + drop-shadow neumorphic) + 711:2094 (item ativo com chrome elaborado: border 1px #C5CFDB + bg #F3F5F8 + radius 8px + style_box_2 5-drop shadow + 2 inset shadows) + 711:2111 (item inativo: text Manrope SemiBold 14px #607A93). Tab ativo Manrope Bold 13px #576B8C. Altura 52px + padding 0 20px. Cada tab tem icone heroicon a esquerda + label horizontal. DIFERENTE do <ds-segmented-tabs> (pill compact 34px sem chrome no ativo). API discriminated union: items: StepTabItem<K>[] (key + label + iconLeft?). activeKey controla destaque. (tabChange) emite ao clicar. USO ESPERADO: cabecalho do body de offcanvas multi-step (NAO usar para tabs de pagina — use <ds-page-nav> — nem filtros pill — use <ds-segmented-tabs>). LIGHTMODE-FIRST.",
+      "tags": [
+        "tabs",
+        "steps",
+        "wizard",
+        "multi-step",
+        "offcanvas",
+        "neumorphic"
+      ],
+      "props": [
+        {
+          "name": "items",
+          "type": "StepTabItem<K>[]",
+          "required": true,
+          "description": "Items dos steps (key + label + iconLeft heroicon opcional)."
+        },
+        {
+          "name": "activeKey",
+          "type": "K",
+          "required": true,
+          "description": "Key do step ativo (destacado com chrome elaborado)."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "default": "false",
+          "description": "Todos os tabs nao-clicaveis (modo bloqueado)."
+        }
+      ],
+      "outputs": [
+        {
+          "name": "tabChange",
+          "type": "EventEmitter<K>",
+          "description": "Emitido ao clicar em um tab. Payload = key. No-op se ja ativo ou disabled."
+        }
+      ],
+      "examples": [
+        "<ds-step-tabs [items]=\"[{key:'dados',label:'Dados Iniciais',iconLeft:'heroSparkles'},{key:'roteiro',label:'Roteiro',iconLeft:'heroBars3'}]\" [activeKey]=\"'dados'\" (tabChange)=\"setStep($event)\" />"
       ]
     }
   ],
