@@ -1,7 +1,7 @@
 {
   "name": "@dgplsoares/singulai-ds-mcp",
-  "version": "0.10.1",
-  "description": "MCP server exposing the Singulai Design System (Angular 20) to AI agents \u2014 Claude Desktop, Claude Code, Cursor, Continue.",
+  "version": "0.11.0",
+  "description": "MCP server exposing the Singulai Design System (Angular 20) to AI agents — Claude Desktop, Claude Code, Cursor, Continue.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {

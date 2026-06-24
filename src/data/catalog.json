@@ -1,6 +1,6 @@
 {
-  "version": "0.10.1",
-  "generated_at": "2026-06-19T03:00:00.000Z",
+  "version": "0.11.0",
+  "generated_at": "2026-06-23",
   "design_system": {
     "name": "Singulai Design System",
     "version": "0.10.1",
@@ -281,6 +281,15 @@
       "success",
       "warning",
       "neutral"
+    ],
+    "AccordionForceMode": [
+      "auto",
+      "all-expanded",
+      "all-collapsed"
+    ],
+    "SegmentedButtonSize": [
+      "sm",
+      "lg"
     ]
   },
   "components": [
@@ -1173,12 +1182,14 @@
       ],
       "outputs": [
         {
-          "name": "tabSelect",
-          "type": "EventEmitter<K>"
+          "name": "tabChange",
+          "type": "EventEmitter<K>",
+          "description": "Emitido ao clicar em um tab. Payload = key do tab clicado."
         },
         {
-          "name": "tabClose",
-          "type": "EventEmitter<K>"
+          "name": "itemClose",
+          "type": "EventEmitter<K>",
+          "description": "Emitido ao clicar no X de um item closable. Payload = key do item fechado."
         }
       ],
       "examples": [
@@ -2259,10 +2270,64 @@
         }
       ],
       "outputs": [],
+      "slots": [
+        {
+          "name": "header-actions",
+          "selector": "[slot=header-actions]",
+          "description": "Slot opcional para componentes no canto direito do header (entre titulo e chevron de collapse). Click no slot tem stopPropagation — nao dispara collapse. Usado em step-monetizacao (toggle DS controlando enable<X> em cards Promo/Cupom/Garantia — DEC-FIG-D-MON-4)."
+        }
+      ],
       "examples": [
         "<ds-form-section title=\"Informacoes do Curso\" icon=\"heroAcademicCap\"><!-- form fields --></ds-form-section>",
         "<ds-form-section title=\"Modulos do Curso\" subtitle=\"Click para colapsar\" icon=\"heroSquares2x2\" [collapsible]=\"true\"><!-- content --></ds-form-section>",
-        "<ds-form-section title=\"Mais Configuracoes\" icon=\"heroCog6Tooth\" [collapsible]=\"true\" [collapsed]=\"true\"><!-- content --></ds-form-section>"
+        "<ds-form-section title=\"Mais Configuracoes\" icon=\"heroCog6Tooth\" [collapsible]=\"true\" [collapsed]=\"true\"><!-- content --></ds-form-section>",
+        "<ds-form-section title=\"Habilitar Preco Promocional\" icon=\"heroTag\" [collapsible]=\"true\"><ds-form-field slot=\"header-actions\" variant=\"toggle\" size=\"md\" label=\"\" [formControl]=\"enablePromoControl\" /><!-- form fields --></ds-form-section>"
+      ]
+    },
+    {
+      "name": "AccordionItemComponent",
+      "selector": "ds-accordion-item",
+      "description": "Row canonica de 'item dentro de modulo' (Figma 590:3272 / 760:4827). Layout: icon + title a esquerda; badges (variants success-teal #46969C / warning-bege #6E5A2E / neutral) + actions (ds-button action-icon Eye/Pencil/Trash) a direita. Background semi-transparente rgba(255,255,255,0.5) + border #FFFFFF. Badges com 5-layer drop shadow + inset shadow neumorphic + outline 0.5px (canonico Figma). Promovido para standalone em D.1.3.4 REFAC-1 — originalmente vivia inline no <ds-accordion> (Fase C C.3). Hoje eh reusado em step-aulas (via <ds-accordion>) E em step-lives (Figma 760:4827) — visual identico. Substitui o <ds-linked-item> removido (eliminou duplicacao visual).",
+      "tags": [
+        "row",
+        "list-item",
+        "accordion",
+        "module",
+        "linked",
+        "badges",
+        "actions",
+        "wizard",
+        "neumorphic"
+      ],
+      "props": [
+        {
+          "name": "item",
+          "type": "AccordionItem",
+          "required": true,
+          "description": "Item a renderizar: { id, kind: 'ebook'|'aula'|'quiz'|'custom', title, icon?, iconSrc?, badges?: AccordionBadge[], showView?, showEdit?, showDelete? }. AccordionBadge: { label, variant?: 'success'|'warning'|'neutral', icon? }."
+        }
+      ],
+      "outputs": [
+        {
+          "name": "itemView",
+          "type": "string",
+          "description": "Emitido ao clicar no botao Visualizar (heroEye, variant info). Payload = item.id."
+        },
+        {
+          "name": "itemEdit",
+          "type": "string",
+          "description": "Emitido ao clicar no botao Editar (heroPencil, variant info). Payload = item.id."
+        },
+        {
+          "name": "itemDelete",
+          "type": "string",
+          "description": "Emitido ao clicar no botao Excluir (heroTrash, variant danger). Payload = item.id."
+        }
+      ],
+      "examples": [
+        "<ds-accordion-item [item]=\"{id:'a1',kind:'aula',title:'Aula 1',badges:[{label:'Video',variant:'success',icon:'heroPlayCircle'}]}\" (itemView)=\"onView($event)\" (itemEdit)=\"onEdit($event)\" (itemDelete)=\"onDelete($event)\" />",
+        "<ds-accordion-item [item]=\"{id:'l1',kind:'aula',title:'Live de apresentacao',icon:'heroVideoCamera',badges:[{label:'25/04/2026',variant:'success',icon:'heroCalendarDays'},{label:'17h - 18h',variant:'success',icon:'heroClock'}]}\" (itemView)=\"onView($event)\" (itemEdit)=\"onOpenExternal($event)\" (itemDelete)=\"onUnlink($event)\" />",
+        "<ds-accordion-item [item]=\"{id:'m1',kind:'ebook',title:'Modulo: Introducao',showView:false}\" (itemEdit)=\"onEdit($event)\" (itemDelete)=\"onDelete($event)\" />"
       ]
     },
     {
@@ -2464,7 +2529,7 @@
     {
       "name": "AccordionComponent",
       "selector": "ds-accordion",
-      "description": "Accordion de modulos com items (Ebooks, Aulas, Quizzes) para wizards Cursos/Mentorias/Eventos da Fase D. Pixel-perfect contra Figma 590:3272. Outer card translucido (rgba(255,255,255,0.25)) + header com botoes dual-border neumorphic (Editar/Deletar Modulo) + subsection 'Aulas do modulo' + list items com badges status (success-teal #46969C / warning-bege #6E5A2E) + 3 row actions (REUSAM ds-button action-icon). API discriminated union (DEC-C-3-A): modules: AccordionModule[] com items tipados (kind: ebook|aula|quiz|custom). Toggle expanded/collapsed: header-left clicavel (icon + title + chevron) + animacao grid-template-rows 1fr<->0fr com DS tokens (mesmo pattern do form-section). Acessibilidade: aria-expanded + aria-controls. LIGHTMODE-FIRST. Componente NOVO standalone (DEC-C-A).",
+      "description": "Accordion de modulos com items (Ebooks, Aulas, Quizzes) para wizards Cursos/Mentorias/Eventos da Fase D. Pixel-perfect contra Figma 590:3272. Outer card translucido + header com botoes dual-border neumorphic (Editar/Deletar Modulo) + subsection 'Aulas do modulo' + list items com badges status (success-teal #46969C / warning-bege #6E5A2E) + 3 row actions (REUSAM ds-button action-icon). API discriminated union: modules: AccordionModule[] com items tipados (kind: ebook|aula|quiz|custom). E.1 (2026-06-21): input forceMode ('auto' | 'all-expanded' | 'all-collapsed') para override do estado expanded pelo caller (nav-tabs Padrao/Expandir/Reorganizar do header do card). Em forceMode='all-collapsed', module-actions (Editar/Deletar) sao escondidas. E.4 (2026-06-22): drag-and-drop de MODULOS via Angular CDK. Input dndEnabled ativa handle (heroBars3) absolute esquerda + cdkDrag; output moduleReorder ({previousIndex, currentIndex}) — caller persiste via moveItemInArray no FormArray + updateOrders. Pattern eager-persist (PUT por drop). E.9 (2026-06-22): drag-and-drop de AULAS per-module (optimistic-cancelable). Input dndLessonsModuleId: string|null indica qual modulo esta em modo dnd de aulas. Quando set, items desse modulo ganham handle + ds-segmented-button Reorganizar/Cancelar/Salvar substitui '+Adicionar Aula' no subsection header. 4 outputs (lessonsReorderRequest/Cancel/Save + lessonsReorder). Caller mantem snapshot deep-copy do FormArray.lessons.value + restore em Cancelar; persist apenas em Salvar. UM modulo dnd por vez; trocar contexto cancela silenciosamente via effect auto-cancel (untracked() na leitura para evitar loop self-cancel). LIGHTMODE-FIRST. Componente NOVO standalone.",
       "tags": [
         "accordion",
         "module",
@@ -2472,7 +2537,8 @@
         "collapsible",
         "wizard",
         "course",
-        "cards"
+        "cards",
+        "drag-drop"
       ],
       "props": [
         {
@@ -2492,6 +2558,24 @@
           "type": "string",
           "default": "'Adicionar Modulo'",
           "description": "Label do botao + Adicionar modulo (footer global, se exibido pelo caller)."
+        },
+        {
+          "name": "forceMode",
+          "type": "'auto' | 'all-expanded' | 'all-collapsed'",
+          "default": "'auto'",
+          "description": "E.1 (DEC-FIG-D-AULAS-E.1.A): override do estado expanded de TODOS os modulos pelo caller. 'auto' = expandedMap interno governa; 'all-expanded' = todos forcados expanded (click no header e no-op); 'all-collapsed' = todos forcados collapsed + module-actions (Editar/Deletar) escondidas (click no header e no-op). Util para nav-tabs do card."
+        },
+        {
+          "name": "dndEnabled",
+          "type": "boolean",
+          "default": "false",
+          "description": "E.4 (DEC-FIG-D-AULAS-E.4.B): habilita drag-and-drop de MODULOS via Angular CDK. True = drag-handle heroBars3 absolute esquerda + cdkDrag ativo. Caller persiste via moveItemInArray no output moduleReorder. Pattern eager-persist (1 drop = 1 PUT)."
+        },
+        {
+          "name": "dndLessonsModuleId",
+          "type": "string | null",
+          "default": "null",
+          "description": "E.9 (DEC-FIG-D-AULAS-E.9.C): id do modulo em modo 'Reorganizar aulas'. UM modulo por vez. Quando set: aulas desse modulo viram cdkDrag com handle visivel + acoes Ver/Editar/Deletar escondidas (via show*=false interno) + subsection header mostra [Cancelar][Salvar] em vez de [Reorganizar]."
         }
       ],
       "outputs": [
@@ -2522,6 +2606,31 @@
         {
           "name": "moduleToggle",
           "type": "EventEmitter<{ moduleId: string; expanded: boolean }>"
+        },
+        {
+          "name": "moduleReorder",
+          "type": "EventEmitter<AccordionModuleReorderEvent>",
+          "description": "E.4: emitido apos drop de modulo via DnD (cdkDropList). Caller persiste com moveItemInArray no FormArray + updateModuleOrders + saveFormData + persistToBackend."
+        },
+        {
+          "name": "lessonsReorderRequest",
+          "type": "EventEmitter<AccordionLessonsReorderEvent>",
+          "description": "E.9: clique [Reorganizar aulas] no header da subsection. Caller faz snapshot deep-copy + ativa modo dnd."
+        },
+        {
+          "name": "lessonsReorderCancel",
+          "type": "EventEmitter<AccordionLessonsReorderEvent>",
+          "description": "E.9: clique [Cancelar reorganizacao]. Caller restaura snapshot + clear state. Sem toast (silencio)."
+        },
+        {
+          "name": "lessonsReorderSave",
+          "type": "EventEmitter<AccordionLessonsReorderEvent>",
+          "description": "E.9: clique [Salvar]. Caller persiste FormArray (saveFormData + persistToBackend) + toast.success + clear state."
+        },
+        {
+          "name": "lessonsReorder",
+          "type": "EventEmitter<AccordionLessonsReorderItemEvent>",
+          "description": "E.9: drop de aula em modo dnd. Caller faz moveItemInArray no FormArray.lessons SEM persist (persist apenas em Save)."
         }
       ],
       "examples": [
@@ -2578,6 +2687,63 @@
         "<ds-type-picker [options]=\"typeOptions\" [(selectedKind)]=\"kind\" ariaLabel=\"Tipo de aula\" />",
         "<ds-type-picker [options]=\"[{ kind: 'videoaula', label: 'Videoaula', icon: 'heroVideoCamera', iconWidth: 27, iconHeight: 15 }, { kind: 'ebook', label: 'Ebook', icon: 'heroBookOpen', iconWidth: 23, iconHeight: 23 }]\" [selectedKind]=\"selected()\" (selectedKindChange)=\"onSelect($event)\" />",
         "<ds-type-picker [options]=\"opts\" [selectedKind]=\"null\" [disabled]=\"isSaving\" />"
+      ]
+    },
+    {
+      "name": "SegmentedButtonComponent",
+      "selector": "ds-segmented-button",
+      "description": "Botao standalone com chrome neumorphic do <ds-segmented-tabs>. Pixel-perfect contra Figma 602:872 (size=sm) e 608:1173 (size=lg). Sub-Fase E.2.7 (2026-06-21). Compartilha o frame visual com <ds-segmented-tabs> mas com 1 botao so: outer border 1px white + radius 10 + bg gradient (white -> #f6f9fb -> #d9e0ee) + 3-layer outer shadow neumorphic; inner border 1px #D5DEE9 + radius 8 + bg #F6F8FB + inset shadow (-2 / +3). Text Manrope SemiBold #466FA9. E.2.13 iter2: estrutura 2-niveis (frame+inner) MATCH segmented-tabs canon — garante altura interna identica quando colocados lado a lado. USO ESPERADO: botoes 'Adicionar X' em headers de cards (sm: padding 12, text 12px, h:34px — Figma 602:872) e CTAs ao final de listagens (lg: padding 30x15, text 14px — Figma 608:1173); botoes Reorganizar/Cancelar/Salvar em subsections (sm). PROIBIDO usar para tabs (use <ds-segmented-tabs>) ou para acoes primarias de form (use <ds-button variant=solid>). LIGHTMODE-FIRST.",
+      "tags": [
+        "button",
+        "segmented",
+        "neumorphic",
+        "cta",
+        "wizard",
+        "add"
+      ],
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "Label do botao."
+        },
+        {
+          "name": "iconLeft",
+          "type": "string | undefined",
+          "default": "undefined",
+          "description": "Icone heroicon a esquerda (opcional). Ex: 'heroPlus'."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'lg'",
+          "default": "'sm'",
+          "description": "Tamanho: sm (header CTA — h:34px, padding 12, text 12px — Figma 602:872) | lg (footer CTA grande — padding 30x15, text 14px — Figma 608:1173)."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "default": "false",
+          "description": "Estado disabled."
+        },
+        {
+          "name": "ariaLabel",
+          "type": "string | undefined",
+          "default": "undefined",
+          "description": "Aria-label opcional (default = label)."
+        }
+      ],
+      "outputs": [
+        {
+          "name": "clicked",
+          "type": "EventEmitter<void>",
+          "description": "Emitido ao clicar (suprimido em disabled)."
+        }
+      ],
+      "examples": [
+        "<ds-segmented-button label=\"Adicionar Módulo\" iconLeft=\"heroPlus\" size=\"sm\" (clicked)=\"onAddModule()\" />",
+        "<ds-segmented-button label=\"Adicionar Módulo\" iconLeft=\"heroPlus\" size=\"lg\" (clicked)=\"onAddModule()\" />",
+        "<ds-segmented-button label=\"Salvar\" iconLeft=\"heroCheck\" size=\"sm\" (clicked)=\"onSave()\" />"
       ]
     }
   ],
