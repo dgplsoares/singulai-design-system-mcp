@@ -1,6 +1,6 @@
 {
-  "version": "0.12.0",
-  "generated_at": "2026-06-23",
+  "version": "0.13.0",
+  "generated_at": "2026-06-26",
   "design_system": {
     "name": "Singulai Design System",
     "version": "0.10.1",
@@ -290,6 +290,17 @@
     "SegmentedButtonSize": [
       "sm",
       "lg"
+    ],
+    "KanbanVariantColor": [
+      "info",
+      "success",
+      "warning",
+      "danger",
+      "purple",
+      "orange",
+      "pink",
+      "teal",
+      "neutral"
     ]
   },
   "components": [
@@ -2787,6 +2798,64 @@
       ],
       "examples": [
         "<ds-step-tabs [items]=\"[{key:'dados',label:'Dados Iniciais',iconLeft:'heroSparkles'},{key:'roteiro',label:'Roteiro',iconLeft:'heroBars3'}]\" [activeKey]=\"'dados'\" (tabChange)=\"setStep($event)\" />"
+      ]
+    },
+    {
+      "name": "KanbanBoardComponent",
+      "selector": "ds-kanban-board",
+      "description": "Quadro Kanban generico para visualizacao em pipeline. Drag-and-drop entre colunas via Angular CDK DragDrop, template customizado para o card via ContentChild '#cardTemplate' (recebe contexto {item, index, column, isDragging}), contagem + valor total por coluna no header, WIP limit por coluna (bloqueia drop quando atingido), variantes semanticas de cor (info/success/warning/danger/purple/orange/pink/teal/neutral) alinhadas com BTN-1 v3 do DS. 100% Signals (columnsSignal reativo). LIGHTMODE-FIRST (zero classes dark). Tokens neumorficos do DS no SCSS. Generico via type parameter T extends {id} — reusavel em Leads, Tarefas, Propostas, Tickets etc. Promovido para o DS na DEC-G4-D2 (Diogo 2026-05-17) a partir de shared/components/kanban-board, trocando cores Tailwind cruas por variantes semanticas.",
+      "tags": [
+        "kanban",
+        "board",
+        "drag-drop",
+        "pipeline",
+        "columns",
+        "leads",
+        "tasks",
+        "wip"
+      ],
+      "props": [
+        {
+          "name": "columns",
+          "type": "KanbanColumn<T>[]",
+          "required": true,
+          "description": "Colunas do kanban. Cada KanbanColumn: {id, label, color (KanbanVariantColor), items: T[], count?, totalValue?, droppable?, draggable?, limit? (WIP limit)}."
+        },
+        {
+          "name": "config",
+          "type": "KanbanBoardConfig<T>",
+          "required": false,
+          "default": "{trackBy: item=>item.id, showCount:true, showTotalValue:false, enableDragDrop:true, showEmptyState:true, emptyStateMessage:'Nenhum item', columnWidth:'280px', minColumnHeight:'400px'}",
+          "description": "Configuracao do board. Campos: {trackBy (obrigatorio), cardTemplate?, minColumnHeight?, columnWidth?, showCount?, showTotalValue?, valueFormat?: 'BRL'|'USD'|..., enableDragDrop?, showEmptyState?, emptyStateMessage?, autoScroll?, containerClass?, columnClass?, cardClass?}."
+        },
+        {
+          "name": "loading",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Estado de loading do board."
+        }
+      ],
+      "outputs": [
+        {
+          "name": "cardClick",
+          "type": "EventEmitter<KanbanCardClickEvent<T>>",
+          "description": "Emitido ao clicar num card. Payload: {item, column, event}. Suprimido durante drag."
+        },
+        {
+          "name": "cardDrop",
+          "type": "EventEmitter<KanbanDropEvent<T>>",
+          "description": "Emitido ao mover card entre colunas. Payload: {item, previousColumnId, currentColumnId, previousIndex, currentIndex}. Nao emite em reorder dentro da mesma coluna."
+        },
+        {
+          "name": "columnClick",
+          "type": "EventEmitter<KanbanColumnClickEvent<T>>",
+          "description": "Emitido ao clicar no header de uma coluna. Payload: {column, event}."
+        }
+      ],
+      "examples": [
+        "<ds-kanban-board\n  [columns]=\"leadColumns()\"\n  [config]=\"kanbanConfig\"\n  (cardClick)=\"onLeadClick($event)\"\n  (cardDrop)=\"onLeadDrop($event)\"\n>\n  <ng-template #cardTemplate let-lead let-column=\"column\">\n    <div class=\"lead-card\">\n      <h4>{{ lead.name }}</h4>\n      <p>{{ lead.email }}</p>\n    </div>\n  </ng-template>\n</ds-kanban-board>",
+        "// Coluna com WIP limit + valor total:\n{id:'qualified', label:'Qualificado', color:'success', items: leads, totalValue: 125000, limit: 10}"
       ]
     }
   ],
