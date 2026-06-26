@@ -6,11 +6,11 @@
 [![Live Showcase](https://img.shields.io/badge/showcase-design.singulai.ai-2563EB)](https://design.singulai.ai)
 [![License](https://img.shields.io/badge/license-MIT-22C55E)](./LICENSE)
 
-🚧 **Alpha (v0.1.x)** — funcional, não recomendado para produção alheia ainda. API das tools e shape do catálogo estabilizam em v1.0.
+🚀 **Stable beta (v0.13.0)** — em uso ativo numa plataforma SaaS multi-tenant em produção. API das tools estável desde v0.1; shape do catálogo evolui aditivamente (novos componentes, props opcionais). Pode usar em produção alheia; recomenda-se pinning de versão.
 
 ## O que é?
 
-Um [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server que expõe o catálogo do **Singulai Design System** (15 componentes Angular 20 standalone + signals + neumorphic) como tools que qualquer AI agent consegue chamar. Casos de uso típicos:
+Um [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server que expõe o catálogo do **Singulai Design System** (40 componentes Angular 20 standalone + signals + neumorphic) como tools que qualquer AI agent consegue chamar. Casos de uso típicos:
 
 - _"Quais componentes existem nesse design system?"_ → tool retorna catálogo
 - _"Componente para botão com loading state?"_ → tool retorna `<ds-button>` + exemplo
@@ -18,11 +18,11 @@ Um [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server que e
 
 O agente AI usa as tools automaticamente quando o usuário pede algo relacionado ao DS — sem precisar ler docs.
 
-## Tools v0.1
+## Tools
 
 | Tool | Função |
 |---|---|
-| **`list_components()`** | Lista os 15 componentes (nome + selector + descrição curta + tags) |
+| **`list_components()`** | Lista os 40 componentes (nome + selector + descrição curta + tags) |
 | **`get_component(name)`** | Info completa: descrição, props tipados (com defaults), outputs, exemplos. Aceita selector (`ds-button`) ou nome de classe (`ButtonComponent`) |
 | **`search_components(query, limit?)`** | Busca por palavras-chave em selector + nome + tags + descrição, com scoring |
 
@@ -93,22 +93,32 @@ Após adicionar a config e reiniciar o cliente, peça ao agente:
 Quais componentes existem no Singulai Design System?
 ```
 
-A resposta deve listar os 15 componentes (button, card, form-field, sidebar-left-nav, page-layout, page-header, nav-footer, ai-assistant-panel, statsbar-card, segmented-tabs, icon-neumorphic, card-panel, ai-assistant-button, dark-mode-button, notifications-button).
+A resposta deve listar os 40 componentes, organizados em 7 categorias:
+
+- **Layout & navegação:** `page-layout`, `page-header`, `page-nav`, `page-footer-sticky`, `sidebar-left-nav`, `nav-footer`, `step-tabs`
+- **Forms & inputs:** `form-field`, `form-section`, `image-dropzone`, `filter-dropdown`, `dropdown-menu`, `segmented-tabs`, `segmented-button`, `type-picker`
+- **Botões & ações:** `button`, `ai-assistant-button`, `dark-mode-button`, `notifications-button`
+- **Containers & cards:** `card`, `card-panel`, `offcanvas`, `modal-confirm`
+- **Data display:** `datatable`, `chart`, `kanban-board`, `pipeline-funnel`, `stats-bar`, `statsbar-card`, `accordion`, `accordion-item`
+- **Feedback & status:** `toast`, `toast-host`, `badge`, `empty-state`, `skeleton`, `progress-bar`, `thumbnail-avatar`, `icon-neumorphic`
+- **Especiais:** `ai-assistant-panel`
 
 Outras perguntas para testar:
 
 - _"Como uso o `<ds-button>`?"_ — chama `get_component`
 - _"Componente para chat de AI?"_ — chama `search_components`
 - _"Quais props o FormFieldComponent aceita?"_ — chama `get_component`
+- _"Componente de Kanban com drag-and-drop?"_ — chama `search_components`
 
 ## Status
 
-| Fase | Tools |
+| Marco | Estado |
 |---|---|
-| ✅ MCP-1/2/3 (atual) | `list_components`, `get_component`, `search_components` |
-| ✅ MCP-4 | npm publish + docs de instalação |
-| 🟡 MCP-5 | validação em Claude Code |
-| 🔜 v0.2+ | `get_tokens`, `get_examples`, `get_theme_overrides`, catálogo auto-gerado via ts-morph |
+| MCP-1/2/3 | ✅ `list_components`, `get_component`, `search_components` (API estável) |
+| MCP-4 | ✅ NPM publish + docs de instalação |
+| MCP-5 | ✅ Validado em Claude Code, Claude Desktop, Cursor (produção) |
+| Catálogo v0.13 | ✅ 40 componentes (build manual via `/sync-ds-mcp` skill) |
+| v0.x+ futuro | 🔜 `get_tokens`, `get_examples`, `get_theme_overrides`, catálogo auto-gerado via ts-morph |
 
 ## Stack
 
